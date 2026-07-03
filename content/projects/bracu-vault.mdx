@@ -1,0 +1,120 @@
+---
+title: BRACU Vault
+slug: bracu-vault
+category: fullstack
+tagline: A verified study archive for BRAC University CSE, running entirely on Cloudflare's free tier.
+summary: A public academic resource platform with a university-email-gated upload system and a data-driven RBAC admin dashboard, built on Cloudflare Workers, D1, and R2.
+period: 2026
+featured: 1
+status: live
+cover: /assets/projects/bracu-vault/landing.webp
+stack:
+  - Next.js 14
+  - TypeScript
+  - Cloudflare Workers
+  - Hono
+  - Cloudflare D1
+  - Drizzle ORM
+  - Cloudflare R2
+  - Clerk
+  - Tailwind CSS
+links:
+  live: https://www.bracuvault.me/
+metrics:
+  - label: hosting cost
+    value: "$0/mo"
+    detail: Cloudflare free tier end to end
+  - label: verification
+    value: email-gated
+    detail: "@g.bracu.ac.bd only, via Clerk allowlist"
+  - label: architecture
+    value: 4 layers
+    detail: controllers to policies
+  - label: access model
+    value: 6-role RBAC
+    detail: data-driven permissions
+gallery:
+  - src: /assets/projects/bracu-vault/orbit.webp
+    caption: Course orbit navigation across the CSE curriculum
+  - src: /assets/projects/bracu-vault/course-view.webp
+    caption: A single course archive with contextual uploads
+  - src: /assets/projects/bracu-vault/courses-code.webp
+    caption: Browsing resources by course code
+  - src: /assets/projects/bracu-vault/landing-light.webp
+    caption: The warm "Paper" light theme
+architecture:
+  - { id: browser, label: "Next.js Site", sub: "Cloudflare Pages", col: 0, row: 1, to: [worker] }
+  - { id: clerk, label: "Clerk", sub: "gsuite allowlist", col: 0, row: 0, to: [worker] }
+  - { id: worker, label: "Hono Worker", sub: "controllers", col: 1, row: 1, to: [services] }
+  - { id: services, label: "Services", sub: "policies + rbac", col: 2, row: 1, to: [d1, r2] }
+  - { id: d1, label: "Cloudflare D1", sub: "sqlite + drizzle", col: 3, row: 0, to: [] }
+  - { id: r2, label: "Cloudflare R2", sub: "file storage", col: 3, row: 2, to: [] }
+---
+
+## The problem
+
+Every BRAC University CSE student rebuilds the same private hoard of notes, slides, past
+exams, and lab solutions, then loses it at graduation. The knowledge exists, but it lives
+in scattered Google Drive links, Messenger groups, and dead senior accounts. There was no
+durable, searchable, trustworthy archive, and no way to know whether an uploaded file came
+from an actual student or a random stranger.
+
+BRACU Vault is my answer: a public study archive with a **verified** upload pipeline and a
+proper moderation layer, built to run indefinitely at zero cost.
+
+## The core constraint that shaped everything
+
+I wanted this to outlive me without a hosting bill, so the entire system had to fit on
+Cloudflare's free tier plus the GitHub Student Pack. That single constraint drove every
+architectural decision:
+
+- **Cloudflare Pages** serves the Next.js front end as a static export.
+- A **Cloudflare Worker** running the Hono router is the API.
+- **Cloudflare D1** (SQLite at the edge) is the database, accessed through Drizzle ORM.
+- **Cloudflare R2** stores uploaded files with no egress fees.
+
+No always-on server, no managed Postgres, no S3 bill. The trade-offs (SQLite semantics,
+Worker CPU limits, cold-start-free but memory-capped execution) became design inputs rather
+than afterthoughts.
+
+## Verification without friction
+
+The hardest product question was: how do you prove someone is a BRAC student without
+building an ID-card OCR pipeline or storing sensitive documents?
+
+The answer turned out to be identity, not paperwork. **Clerk** handles authentication with a
+sign-up allowlist locked to `*@g.bracu.ac.bd`. If Clerk confirms you own a BRAC GSuite
+address, that alone is sufficient proof of studenthood, so there is no separate student-ID
+step at all. On first verified sign-in, the Worker's `POST /verify/activate` marks the user
+verified, grants the `verified_student` role, and writes an audit-log entry, all as one
+atomic D1 batch. The operation is idempotent, so replays are safe.
+
+I did load an 8,358-row student roster (HMAC-hashed) for a possible future "verified CSE
+student" tier, but deliberately kept it out of the current gate. Email ownership is enough,
+and less data collected is less data to protect.
+
+## Data-driven access control
+
+Roles form a ladder: `unverified < pending < verified_student < moderator < admin <
+super_admin`. The mistake I wanted to avoid was hardcoding permission checks throughout the
+codebase, so permissions are **data-driven**: a `role_permissions` table (seeded from SQL)
+maps roles to capabilities like `uploads.create`, `uploads.moderate`, `users.verify`,
+`roles.manage`, and `audit.read`. Adding a capability is a data change, not a code change.
+
+The API follows a clean four-layer flow: **controllers to services to repositories to
+policies**. Policies are the only place authorization lives, which keeps the business logic
+honest and testable.
+
+## Contextual community uploads
+
+Uploads are scoped to a course folder rather than dumped into a universal pool. Inside a
+course archive, the "Upload here" action carries the `{ course, section }` context (section
+being a folder path like `Lab / Assignments`) into a pre-filled, editable modal. On approval,
+a moderator promotes the pending row and the file becomes public in the right place. This
+keeps the archive navigable as it grows, instead of degrading into an unsorted dump.
+
+## What I would build next
+
+The roster HMAC infrastructure is already in place, so a "verified CSE student" badge and
+contributor leaderboards are natural next steps. Full-text search across file contents (not
+just titles) would meaningfully improve discovery once the archive is large enough to need it.

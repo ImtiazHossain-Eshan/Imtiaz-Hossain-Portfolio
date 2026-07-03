@@ -1,0 +1,117 @@
+---
+title: "Obscrowd: Multi-Portrait Biometric Unlinkability under Generative Editing"
+slug: obscrowd
+authors:
+  - Imtiaz Hossain
+venue: Working paper
+year: 2026
+status: preprint
+abstract: >
+  Generative image editors can modify a portrait (changing pose, expression,
+  background, or style) while leaving enough biometric detail in the edited
+  output that face-recognition systems can still match it back to the original
+  subject, creating a privacy risk that is distinct from image forgery. Existing
+  protective methods typically focus on single-person portraits, anti-editing
+  objectives, or narrow editing pipelines, making them less reliable for
+  realistic multi-portrait and group-image settings. We address this gap with
+  Obscrowd, a privacy framework for multi-portrait biometric unlinkability under
+  generative editing. Rather than preventing edits, our goal is to reduce the
+  ability of face-recognition systems to re-link the edited output to the
+  depicted individuals while the protected image itself remains visually
+  faithful to the original. The framework protects all detected faces in a group
+  image jointly using a single imperceptible, face-localized perturbation guided
+  by soft masks. Perturbations are produced through a teacher-student-refinement
+  pipeline, where a diffusion-guided teacher generates image-specific protection,
+  a lightweight student generator enables efficient deployment, and an
+  inference-time refinement stage sharpens the perturbation within a bounded
+  budget. Training combines teacher imitation with identity-disruption
+  supervision from a face-recognition ensemble and differentiable editing
+  attacks. Through per-face controlled evaluation on multi-portrait images, we
+  show that the method reduces biometric linkability under diverse editing and
+  processing conditions. Additional evaluation on comparable single-portrait
+  settings indicates consistent identity-protection behavior beyond group scenes.
+  This work advances joint multi-face privacy protection while highlighting
+  reconstruction and compression as remaining challenges.
+keywords:
+  - biometric privacy
+  - generative editing
+  - face recognition
+  - adversarial perturbation
+  - diffusion models
+  - teacher-student distillation
+bibtex: |
+  @unpublished{hossain2026obscrowd,
+    title   = {Obscrowd: Multi-Portrait Biometric Unlinkability under Generative Editing},
+    author  = {Hossain, Imtiaz},
+    year    = {2026},
+    note    = {Working paper},
+    school  = {BRAC University}
+  }
+links:
+  scholar: https://scholar.google.com/citations?user=CIjeZSsAAAAJ&hl=en
+figures:
+  - src: /assets/research/obscrowd/figure-1.webp
+    caption: "Original, protected, and the imperceptible perturbation (delta map at plus/minus 0.16). After an instruct-pix2pix smile edit, face-recognition similarity falls from 0.957 (unprotected) to 0.138 (protected)."
+  - src: /assets/research/obscrowd/figure-2.webp
+    caption: "Qualitative comparison against EditShield, ID-Protector, PhotoGuard, and diffusion purification. Reference, protected, and edited rows show Obscrowd disrupts re-linkable identity while keeping the protected image faithful."
+---
+
+## Motivation
+
+Generative image editors have become good enough that editing a photo no longer
+destroys the biometric signal inside it. You can change someone's pose,
+expression, background, or style, and a face-recognition system will still match
+the edited output back to the original person. That is a privacy risk of a
+different kind than deepfake forgery: the concern is not that the image is fake,
+but that the depicted individual stays **re-linkable** across edits they never
+consented to.
+
+Existing protection methods mostly assume a single subject, aim to *prevent*
+editing outright, or target one narrow editing pipeline. Real photos are messier:
+group shots, multiple faces, and an open-ended space of possible edits. Obscrowd
+is built for that setting.
+
+## The idea: unlinkability, not un-editability
+
+The framing shift at the heart of this work is that we do not try to stop the
+edit. We let the image be edited, and instead reduce the ability of
+face-recognition systems to **re-link** the edited result to the real people in
+it, while keeping the protected image visually faithful to the original.
+
+Every detected face in a group image is protected **jointly** by a single,
+imperceptible, face-localized perturbation guided by soft masks, so one pass
+protects the whole crowd rather than compositing per-face patches.
+
+## The pipeline
+
+Protection is produced by a **teacher-student-refinement** pipeline:
+
+- A **diffusion-guided teacher** generates strong, image-specific protection.
+- A **lightweight student generator** distills the teacher so protection can be
+  deployed efficiently at inference time.
+- An **inference-time refinement** stage sharpens the perturbation within a
+  bounded perceptual budget.
+
+Training combines **teacher imitation** with **identity-disruption supervision**
+drawn from an ensemble of face-recognition models and **differentiable editing
+attacks**, so the perturbation is optimized to survive realistic edits rather
+than a single fixed one.
+
+## What the evaluation shows
+
+Under per-face controlled evaluation on multi-portrait images, the perturbation
+measurably reduces biometric linkability across diverse editing and processing
+conditions. In the headline qualitative example, an instruct-pix2pix smile edit
+that leaves face-recognition similarity at 0.957 on an unprotected image drops it
+to 0.138 once protected, a large identity-disruption effect from a perturbation
+that is visually imperceptible. The behavior carries over to comparable
+single-portrait settings, suggesting the protection is not narrowly tuned to
+group scenes.
+
+## Honest limitations
+
+The paper is explicit that **reconstruction and compression remain open
+challenges**: an adversary with strong purification or aggressive re-compression
+can erode protection, and pushing robustness there is the natural next direction.
+Naming these limits is part of the contribution, because a privacy method that
+overclaims its guarantees is worse than one that states its envelope.

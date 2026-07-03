@@ -1,0 +1,88 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Imtiaz Hossain",
+    "label": "AI Engineer, Machine Learning, Computer Vision, NLP, Research",
+    "email": "imtiaz.hossain.eshan@gmail.com",
+    "summary": "AI Engineer and researcher specializing in computer vision, NLP, and deep learning, with a track record of production-grade full-stack systems and rigorous, reproducible ML studies. Trains and evaluates models end to end (88.22% test Dice for brain-tumor segmentation, 97.40% accuracy for AI-text detection, 0.9376 macro-F1 across a 27-run NLP benchmark) and ships systems on zero-cost cloud infrastructure. Research advances biometric privacy under generative editing.",
+    "location": { "city": "Dhaka", "countryCode": "BD", "region": "Bangladesh" },
+    "profiles": [
+      { "network": "GitHub", "username": "ImtiazHossain-Eshan", "url": "https://github.com/ImtiazHossain-Eshan" },
+      { "network": "LinkedIn", "username": "imtiazhossaineshan", "url": "https://www.linkedin.com/in/imtiazhossaineshan/" },
+      { "network": "Google Scholar", "username": "Imtiaz Hossain", "url": "https://scholar.google.com/citations?user=CIjeZSsAAAAJ&hl=en" },
+      { "network": "LeetCode", "username": "Imtiaz_Hossain_Eshan", "url": "https://leetcode.com/u/Imtiaz_Hossain_Eshan/" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Independent Research, BRAC University",
+      "position": "AI Researcher (Biometric Privacy)",
+      "startDate": "2026",
+      "highlights": [
+        "Designed Obscrowd, a privacy framework for multi-portrait biometric unlinkability under generative editing, protecting every detected face in a group image with a single imperceptible, mask-guided perturbation.",
+        "Engineered a teacher-student-refinement pipeline: a diffusion-guided teacher, a lightweight student generator, and an inference-time refinement stage within a bounded perceptual budget.",
+        "Reduced face-recognition similarity from 0.957 to 0.138 after generative edits while keeping the image visually faithful."
+      ]
+    },
+    {
+      "name": "Brain Tumor Segmentation & Classification",
+      "position": "Machine Learning Engineer (Medical Imaging)",
+      "startDate": "2026",
+      "highlights": [
+        "Implemented and compared U-Net, Attention U-Net, and three CNN classifiers on the BRISC 2025 MRI dataset in PyTorch.",
+        "Achieved 88.22% test Dice, 79.74% mIoU, 99.61% pixel accuracy, and 97.50% four-class classification accuracy on 860 unseen samples.",
+        "Ran a 20-config hyperparameter study and showed separate training beats joint multi-task learning by ~5 points."
+      ]
+    },
+    {
+      "name": "News Classification & AI-Text Detection",
+      "position": "NLP Engineer",
+      "startDate": "2025",
+      "endDate": "2026",
+      "highlights": [
+        "Built a 27-experiment benchmark (9 architectures x 3 preprocessing pipelines) on 102k headlines: 0.9376 macro-F1 (BERT-Base), 0.9214 (Bi-GRU in 19s).",
+        "Engineered 28 stylometric features with mRMR/RFE selection, reaching 97.40% accuracy on HC3 with Random Forest and quantifying a cross-generator generalization gap.",
+        "Found that BERT's WordPiece tokenizer inverts the preprocessing rules that hold for classical models."
+      ]
+    },
+    {
+      "name": "BRACU Vault, Polaris, E-GamerHub",
+      "position": "Full-Stack Engineer",
+      "startDate": "2025",
+      "endDate": "2026",
+      "highlights": [
+        "Built BRACU Vault on Cloudflare's free tier (Workers + Hono, D1, R2, Clerk) with data-driven six-role RBAC and email-gated uploads.",
+        "Engineered Polaris, an AI academic strategist using Gemini structured-JSON output, RAG, and a transparent probability model with no-API-key fallback.",
+        "Developed E-GamerHub, a MERN platform with Socket.IO messaging, RBAC moderation, and Groq Llama 3 natural-language search."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "BRAC University",
+      "area": "Computer Science and Engineering",
+      "studyType": "B.Sc.",
+      "score": "CGPA 3.7+",
+      "courses": ["Machine Learning", "Artificial Intelligence", "Computer Graphics", "Operating Systems", "Database Systems", "Data Structures & Algorithms"]
+    }
+  ],
+  "publications": [
+    {
+      "name": "Obscrowd: Multi-Portrait Biometric Unlinkability under Generative Editing",
+      "releaseDate": "2026",
+      "summary": "Joint multi-face privacy protection via a teacher-student-refinement pipeline. Working paper."
+    }
+  ],
+  "certificates": [
+    { "name": "Understanding Machine Learning", "issuer": "DataCamp" },
+    { "name": "Data Manipulation in Python", "issuer": "DataCamp" },
+    { "name": "Cleaning Data in Python", "issuer": "DataCamp" }
+  ],
+  "skills": [
+    { "name": "Languages", "keywords": ["Python", "TypeScript", "C", "JavaScript", "SQL", "PHP"] },
+    { "name": "AI / ML", "keywords": ["PyTorch", "scikit-learn", "HuggingFace Transformers", "OpenCV", "gensim", "NumPy", "pandas"] },
+    { "name": "Models & methods", "keywords": ["U-Net", "DenseNet", "BERT", "GRU/LSTM", "Random Forest", "diffusion & adversarial ML", "RAG"] },
+    { "name": "Web & backend", "keywords": ["Next.js", "React", "Node.js", "Express", "Hono", "MongoDB", "MySQL", "Drizzle"] },
+    { "name": "Cloud & tooling", "keywords": ["Cloudflare Workers/D1/R2", "Vercel", "Docker", "Git", "Linux", "PWA"] }
+  ]
+}

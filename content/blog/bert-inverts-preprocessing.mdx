@@ -1,0 +1,75 @@
+---
+title: "The preprocessing rule that BERT breaks"
+slug: bert-inverts-preprocessing
+date: 2026-04-02
+draft: true
+tags: [nlp, transformers, bert, experiments]
+summary: "Across 27 controlled experiments on news headlines, cleaning the text helped every model except one. BERT scored highest on the raw, HTML-wrapped, un-preprocessed input, and worst on aggressively cleaned text. Here is why WordPiece flips the rules."
+related: [news-topic-classification]
+---
+
+## A benchmark, not a leaderboard
+
+I set out to answer a boring-sounding question: on short news headlines, how much
+does preprocessing actually matter, and does the answer depend on the model? The
+honest way to find out is a factorial design, so I ran **nine models across three
+preprocessing pipelines**: 27 experiments under one identical protocol.
+
+The three pipelines:
+
+- **None:** raw text, HTML wrappers included.
+- **Extreme:** lowercase, stopwords removed, Porter stemming.
+- **Optimum:** lemmatization, negation-preserving, digits kept.
+
+## The expected pattern (and where it held)
+
+For classical models, the story was the textbook one: cleaning helps. The Deep NN
+over TF-IDF gained **3.4 macro-F1 points** moving from `none` to `optimum`. HTML
+tokens dominate the feature space if you leave them in, and a bag-of-words model
+has no way to ignore them.
+
+Recurrent models over Skip-gram embeddings barely moved (Bi-LSTM gained only 1.1),
+because the embedding's `min_count` frequency floor already filters HTML noise
+before the network ever sees it.
+
+## Then BERT
+
+BERT inverted the rule. Its best score came on the **raw, un-preprocessed** input:
+
+| Variant | BERT-Base macro-F1 |
+| --- | --- |
+| none | **0.9376** |
+| optimum | 0.9313 |
+| extreme | 0.9288 |
+
+The cleaner the text, the *worse* BERT did.
+
+## Why WordPiece flips it
+
+Two mechanisms:
+
+1. **HTML is just predictable subwords.** WordPiece tokenizes `<br>` into a
+   stable, repeatable sequence of subword tokens. BERT learns to treat it as
+   noise it can ignore, so removing it gains nothing and costs the capitalization
+   and structure cues it was pretrained on.
+2. **Stemming destroys the subword statistics.** Porter stemming turns `running`
+   into `run`, `international` into `intern`. BERT was pretrained on unstemmed
+   text, so stemming hands it token distributions it has never seen, degrading the
+   very signal it relies on.
+
+```python
+# The same headline, three ways BERT sees it
+raw       = "<html><body>Microsoft unveils new Windows<br></body></html>"
+extreme   = "microsoft unveil new window"   # stemming + stopword removal
+# BERT prefers `raw`: WordPiece handles the tags, keeps the real words intact
+```
+
+## The takeaway
+
+There is no universal preprocessing recipe. The right amount of cleaning is a
+property of the model, not the dataset. For a bag-of-words classifier, scrub
+hard. For a pretrained subword transformer, get out of its way.
+
+The full 27-run matrix is an interactive heatmap in the
+[playground](/playground/news-classification), where you can trace exactly how
+each model responds to each pipeline.

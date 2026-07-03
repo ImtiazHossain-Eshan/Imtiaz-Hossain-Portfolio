@@ -1,0 +1,93 @@
+---
+title: Polaris
+slug: polaris
+category: fullstack
+tagline: An AI academic strategist that reverse-engineers competitive university-admission profiles, with structured-output LLM tool use and transparent probability modeling.
+summary: A Next.js platform combining RAG over a curated knowledge base, Gemini structured-JSON output, and a transparent logistic-regression acceptance model, built for the Infinity AI BuildFest 2026 and degrading gracefully with no API key.
+period: 2026
+featured: 3
+status: live
+cover: /assets/projects/polaris/landing-hero.webp
+stack:
+  - Next.js 15
+  - TypeScript
+  - MongoDB Atlas
+  - NextAuth v4
+  - Google Gemini 2.0 Flash
+  - RAG
+  - LemonSqueezy
+  - Zod
+links:
+  live: https://polaris-zcq9.vercel.app/
+  github: https://github.com/ImtiazHossain-Eshan/Polaris
+metrics:
+  - label: llm mode
+    value: structured
+    detail: typed JSON via responseSchema
+  - label: knowledge base
+    value: 60 docs
+    detail: cosine search, no vector DB
+  - label: probability
+    value: transparent
+    detail: top-3 weighted factors
+  - label: offline
+    value: full demo
+    detail: heuristic fallback, no key
+gallery:
+  - src: /assets/projects/polaris/landing.webp
+    caption: Problem framing and three-tier pricing
+  - src: /assets/projects/polaris/landing-alt.webp
+    caption: The AI-architecture explanation for judges
+architecture:
+  - { id: intake, label: "Intake", sub: "6 questions", col: 0, row: 1, to: [api] }
+  - { id: api, label: "API Route", sub: "/api/roadmap", col: 1, row: 1, to: [rag, prob] }
+  - { id: rag, label: "RAG", sub: "60-doc KB", col: 2, row: 0, to: [gemini] }
+  - { id: gemini, label: "Gemini 2.0", sub: "structured json", col: 3, row: 0, to: [dash] }
+  - { id: prob, label: "LogReg Model", sub: "weighted factors", col: 2, row: 2, to: [dash] }
+  - { id: dash, label: "Dashboard", sub: "milestones + sims", col: 4, row: 1, to: [] }
+---
+
+## The problem
+
+Competitive university admissions are gatekept by fragmented Reddit threads and $2,000+
+consultants. Polaris replaces both with a transparent, data-driven roadmap, an AI-native
+platform that reverse-engineers what successful applicants actually did, from early schooling
+through graduate school. It was my submission to the **Infinity AI BuildFest 2026**.
+
+## Structured-output LLM, not a chatbot wrapper
+
+The core engineering decision is that Polaris does not wrap a chat model. **Gemini 2.0 Flash
+returns typed JSON** conforming to a `responseSchema`, so `/api/roadmap` yields 8-12
+milestones grouped by quarter, each with a rationale grounded in real knowledge-base
+documents. Because the output is structurally guaranteed, the dashboard can render it
+confidently instead of parsing free text.
+
+Retrieval is deliberately infrastructure-free: roughly 60 curated documents (universities,
+scholarships, accepted-student case studies) at 768 dimensions live in a single
+`embeddings.json`, and cosine search runs in pure TypeScript. **No vector database.** Adding a
+country is adding a JSON document and re-running the embeddings script, so the architecture
+scales globally without code changes.
+
+## Transparent probability, by design
+
+The acceptance-probability engine is a **logistic-regression model with visible factor
+weights**. Every prediction shows its top-three contributing factors and their magnitudes, and
+users can simulate "what if I add X" with live sliders. Crucially, it uses **no demographic
+proxies**, ethical AI by construction rather than as a disclaimer.
+
+## Graceful degradation
+
+A demo that only works with a paid API key is a fragile demo. Without a Gemini key, Polaris
+transparently falls back to keyword-overlap retrieval and a deterministic heuristic roadmap
+engine, so the entire vertical slice (landing, intake, strategist, dashboard, probability
+simulator) is verifiable offline. Paid CTAs degrade to the working free tier when LemonSqueezy
+is unconfigured.
+
+## Production hardening
+
+Polaris is account-based with role-aware access (student, parent, partner, admin) and
+server-plus-client feature gating across Free / Pro / Elite tiers. Parents and partners get a
+read-only monitoring dashboard via token-based linking. The stack is hardened with Zod
+validation, centralized API error handling, MongoDB indexes, environment validation, and
+security headers. Payments run through **LemonSqueezy** as a merchant of record, which
+matters for Bangladesh-based payouts, with signed webhooks flipping the user's plan.

@@ -1,0 +1,66 @@
+---
+title: "The value of a 0.44: reporting a machine-learning ceiling honestly"
+slug: software-quality-honest
+date: 2026-01-22
+draft: true
+tags: [machine-learning, research, evaluation]
+summary: "My software-quality classifier topped out at 0.4418 F1. Instead of hiding it, I made the ceiling the finding, and used unsupervised learning to prove the problem was the features, not the models."
+related: [software-quality-prediction]
+---
+
+## When the number is bad
+
+Sometimes the honest result of a machine-learning study is: this does not work
+very well. Predicting software-quality labels (High, Medium, Low) from nine code
+metrics gave me a best weighted F1 of **0.4418**, from a decision tree. For a
+balanced three-class problem where chance is about 0.33, that is barely above
+guessing.
+
+The temptation is to bury it, cherry-pick a favorable slice, or quietly reframe
+the metric. I did the opposite: I made the ceiling the point of the study.
+
+## The scoreboard
+
+| Model | Weighted F1 |
+| --- | --- |
+| Decision Tree | 0.4418 |
+| Random Forest | 0.35 |
+| Neural Network | 0.35 |
+| KNN | 0.30 |
+
+Note the simple decision tree beating the random forest and the neural network.
+That is itself a signal: when your fanciest models cannot pull ahead of the
+simplest, the problem is usually the data, not the modeling.
+
+## Proving the features are the limit
+
+To test that hypothesis, I ran k-means **without** the labels and asked: does the
+natural structure of the code metrics line up with quality?
+
+The elbow method cleanly suggested **k=3**, matching the three quality tiers,
+which is encouraging. But projecting the clusters with PCA showed them heavily
+overlapping. The data does cluster into three groups, but those groups do not
+correspond to the quality labels.
+
+That is the whole story in one picture: the code metrics and the quality target
+are only weakly related. No classifier can recover a signal that is not there.
+
+## Why the metrics fall short
+
+- Quality is partly **subjective** and inconsistently labeled.
+- The genuinely predictive signals, version history, review data, developer
+  activity, are **not among these nine metrics**.
+- The relationships that do exist are **non-linear** in ways these models struggle
+  with.
+
+## The professional move
+
+A study that reports 0.44 honestly, and diagnoses *why*, is more useful than one
+that manufactures a 0.7 through leakage or metric-shopping. The former tells the
+next person exactly where to invest: better features, not fancier models. The
+latter wastes their time.
+
+Reporting a ceiling honestly is not a weakness in a portfolio. It is the exact
+discipline that separates a result you can trust from one you cannot. Explore the
+cluster overlap yourself in the
+[playground](/playground/software-quality).

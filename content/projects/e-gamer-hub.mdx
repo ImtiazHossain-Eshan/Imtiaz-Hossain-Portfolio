@@ -1,0 +1,78 @@
+---
+title: E-GamerHub
+slug: e-gamer-hub
+category: fullstack
+tagline: A social gaming platform with real-time messaging, per-game stats, RBAC moderation, and natural-language player search powered by an LLM.
+summary: A full MERN-stack social platform where gamers discover games, find teammates, and chat in real time, featuring Socket.IO messaging, an admin dashboard with RBAC, and Groq Llama 3 natural-language player search.
+period: 2026
+featured: 4
+status: shipped
+cover: /assets/projects/e-gamer-hub/cover.webp
+stack:
+  - React 18
+  - Vite
+  - Node.js
+  - Express
+  - MongoDB Atlas
+  - Socket.IO
+  - JWT
+  - Groq Llama 3
+links:
+  github: https://github.com/CodeFrag-Studios/E-Gamer-Hub
+metrics:
+  - label: realtime
+    value: Socket.IO
+    detail: DM + presence + unread
+  - label: ai search
+    value: Llama 3
+    detail: natural-language queries
+  - label: access
+    value: RBAC
+    detail: admin moderation
+  - label: catalog
+    value: 20+ games
+    detail: seeded, categorized
+gallery:
+  - src: /assets/projects/e-gamer-hub/screen-1.webp
+    caption: Gamer profile with dynamic stat bars and win-rate charts
+architecture:
+  - { id: client, label: "React + Vite", sub: "react-router", col: 0, row: 1, to: [api, socket] }
+  - { id: api, label: "Express API", sub: "jwt + bcrypt", col: 1, row: 0, to: [mongo] }
+  - { id: socket, label: "Socket.IO", sub: "presence + dm", col: 1, row: 2, to: [mongo] }
+  - { id: mongo, label: "MongoDB", sub: "mongoose", col: 2, row: 1, to: [] }
+  - { id: groq, label: "Groq Llama 3", sub: "nl player search", col: 1, row: 1, to: [mongo] }
+---
+
+## What it is
+
+E-GamerHub is a social platform where gamers discover games, find teammates, showcase stats,
+chat in real time, and build a community. It is a full MERN application (MongoDB, Express,
+React, Node) styled with a custom "Emerald Matrix" dark theme, built with the team at CodeFrag
+Studios.
+
+## Real-time as a first-class concern
+
+Messaging runs on **Socket.IO** with bidirectional WebSockets: direct messages between
+players, live online/offline presence, unread indicators, and persistent chat history. This
+is the part of the app where the architecture had to be right, because presence and delivery
+guarantees are exactly where naive implementations fall apart. Conversations, unread counts,
+and online tracking are all wired through the socket layer rather than bolted onto polling.
+
+## Natural-language player search
+
+Instead of a filter form, players can search in plain English, "find Gold rank Valorant
+players," and a **Groq-hosted Llama 3** model extracts the structured intent (game, rank,
+attributes) that drives the MongoDB query. A floating AI chat widget exposes this anywhere in
+the app. It is a small, well-scoped use of an LLM: parse messy human input into a typed query,
+then let the database do what databases are good at.
+
+## Depth in the profile and admin layers
+
+The gamer profile is Gankster.gg-inspired, with a hero banner, per-game combat stats (K/D
+ratio, win rate, hours, kills/deaths/assists), win-rate charts, achievements, and an
+interactive game selector so a player fills the stats specific to each title. The **admin
+dashboard** implements role-based access control with platform metrics, user management, and
+moderation (ban/unban) behind search and pagination. Authentication covers registration,
+login, and password reset with JWT and bcrypt, and profile settings span linked accounts
+(Discord, Steam, Xbox, PlayStation, Riot, Epic), notifications, and the stats editor. Clan
+management rounds it out with group creation, membership, and group chat.

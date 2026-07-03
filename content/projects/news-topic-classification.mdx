@@ -1,0 +1,114 @@
+---
+title: News Topic Classification
+slug: news-topic-classification
+category: ai
+tagline: 27 controlled experiments across preprocessing, embeddings, and models, revealing that BERT inverts the preprocessing rules that hold for everything else.
+summary: A reproducible NLP benchmark of nine architectures across three preprocessing pipelines on 102k news headlines, where BERT-Base tops out at 0.9376 macro-F1 but a Bi-GRU reaches 0.9214 in 19 seconds of training.
+period: 2026
+featured: 6
+status: research
+cover: /assets/lab/news-classification/wordclouds.webp
+stack:
+  - PyTorch
+  - HuggingFace Transformers
+  - BERT-Base
+  - Bi-GRU
+  - LSTM
+  - gensim Word2Vec
+  - scikit-learn
+  - TF-IDF
+links:
+  paper: /assets/papers/news-topic-classification-report.pdf
+  demo: /playground/news-classification
+metrics:
+  - label: best macro-f1
+    value: "0.9376"
+    detail: BERT-Base, no preprocessing
+  - label: best non-transformer
+    value: "0.9214"
+    detail: Bi-GRU in 18.7s
+  - label: experiments
+    value: "27"
+    detail: 9 models x 3 pipelines
+  - label: corpus
+    value: 102k
+    detail: training headlines
+gallery:
+  - src: /assets/lab/news-classification/macro-f1-grid.webp
+    caption: "Macro-F1 across every model x preprocessing combination"
+  - src: /assets/lab/news-classification/class-distribution.webp
+    caption: "Training set is imbalanced; test set is balanced"
+  - src: /assets/lab/news-classification/top-words.webp
+    caption: "Top-20 class-discriminative tokens per topic"
+architecture:
+  - { id: raw, label: "Headlines", sub: "html-wrapped", col: 0, row: 1, to: [prep] }
+  - { id: prep, label: "3 Pipelines", sub: "none/extreme/opt", col: 1, row: 1, to: [tfidf, w2v, wp] }
+  - { id: tfidf, label: "TF-IDF", sub: "logreg / dnn", col: 2, row: 0, to: [eval] }
+  - { id: w2v, label: "Skip-gram", sub: "6 rnn variants", col: 2, row: 1, to: [eval] }
+  - { id: wp, label: "WordPiece", sub: "bert-base", col: 2, row: 2, to: [eval] }
+  - { id: eval, label: "Macro-F1", sub: "27 runs", col: 3, row: 1, to: [] }
+---
+
+## The question
+
+Transformers dominate NLP headlines, but on short text like news titles, where context
+windows are tiny and pretraining signal is diluted, do classical bag-of-words pipelines and
+recurrent networks still compete? I built a single reproducible harness to find out, on a
+four-class corpus (Science & Technology, Business, Sports, World News) of **102,002 training
+and 12,000 test headlines**.
+
+## The experimental grid
+
+The design is deliberately factorial: **nine models times three preprocessing pipelines =
+27 controlled experiments**, all under identical class-weighting and tuning protocols so I
+could isolate the marginal contribution of each decision.
+
+**The three preprocessing pipelines:**
+
+- **None:** raw text, HTML wrappers included. A worst-case baseline.
+- **Extreme:** lowercase, HTML stripped, URL/digit/punctuation removed, NLTK stopwords
+  removed, Porter stemming.
+- **Optimum:** lowercase, HTML stripped, URL collapsing, *light* stopword removal that
+  preserves negations, WordNet lemmatization, digits kept (finance and sports headlines need
+  numbers).
+
+**The nine models:** Logistic Regression and a 4-layer Deep NN over TF-IDF; SimpleRNN, GRU,
+LSTM and their bidirectional variants over from-scratch Skip-gram embeddings; and BERT-Base.
+The training set has a 3.4x class imbalance, so every model uses inverse-frequency class
+weighting, which is necessary rather than optional here.
+
+## Four patterns emerged
+
+**1. Preprocessing matters most for shallow models.** The Deep NN gains 3.4 macro-F1 points
+moving from `none` to `optimum`, while Bi-LSTM gains only 1.1, because its Skip-gram
+embedding's frequency floor already filters HTML noise before it reaches the network.
+
+**2. Optimum beats Extreme for most recurrent models.** Aggressive Porter stemming collapses
+semantically distinct tokens (international / intern) and removing all stopwords drops the
+negation cues that World News and Business reporting depend on.
+
+**3. Bidirectional gated cells dominate the non-transformer family.** Bi-GRU on `optimum`
+hits **0.9214 macro-F1** in **18.7 seconds** of training, beating Logistic Regression and the
+unidirectional GRU, and landing within 0.016 of BERT for two orders of magnitude less compute.
+
+**4. BERT inverts the preprocessing intuition.** This is the surprise. BERT scores *highest*
+on `none` (0.9376) and *lowest* on `extreme` (0.9288). WordPiece tokenization treats HTML
+wrappers as predictable subword sequences and benefits from preserved capitalization, while
+Porter stemming destroys the subword statistics BERT was pretrained on. The preprocessing
+rule that helps every other architecture actively hurts BERT.
+
+| Model | Best variant | Macro-F1 | Train time |
+| --- | --- | --- | --- |
+| BERT-Base | none | 0.9376 | ~35 min |
+| Bi-GRU | optimum | 0.9214 | 18.7 s |
+| Logistic Regression | extreme | 0.9209 | 1.5 s |
+| Deep NN (worst) | none | 0.8804 | 52 s |
+
+## The takeaway
+
+The dominant source of residual error is the Business / World News pair, which shares
+macro-economic and political vocabulary; Sports is essentially separable (F1 ~0.97 across the
+family). The headline conclusion for practitioners: **treat preprocessing as model-specific,
+not universal**. What cleans up a bag-of-words model can degrade a subword transformer. The
+[playground](/playground/news-classification) renders the full 27-run matrix as an interactive
+heatmap so you can trace every one of these effects yourself.

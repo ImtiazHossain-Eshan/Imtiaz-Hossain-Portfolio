@@ -1,0 +1,71 @@
+---
+title: "A production platform that costs $0/month: BRACU Vault on Cloudflare"
+slug: bracu-vault-zero-cost
+date: 2026-02-10
+draft: true
+tags: [full-stack, cloudflare, architecture, systems]
+summary: "How a single hard constraint, run forever without a hosting bill, shaped every architectural decision behind a verified study-archive platform: Workers, D1, R2, and identity-as-proof instead of an ID-scanning pipeline."
+related: [bracu-vault]
+---
+
+## One constraint to rule them all
+
+I wanted BRACU Vault, a study archive for my university's CSE students, to outlive
+my involvement. That meant one non-negotiable constraint: it had to run
+**indefinitely at zero cost**. No always-on server, no managed database bill, no
+storage egress fees.
+
+That single line did more architectural work than any design doc could. Here is
+how it propagated.
+
+## The stack the constraint chose
+
+- **Cloudflare Pages** serves the Next.js front end as a static export.
+- A **Cloudflare Worker** running the Hono router is the entire API.
+- **Cloudflare D1** (SQLite at the edge) is the database, via Drizzle ORM.
+- **Cloudflare R2** stores uploaded files with no egress fees.
+
+Every one of these has a free tier generous enough for a university-scale archive.
+The trade-offs, SQLite semantics, Worker CPU limits, became design inputs I
+planned around rather than fought.
+
+## Verification without a document pipeline
+
+The hardest product question: how do you prove someone is a real student without
+building ID-card OCR and storing sensitive documents?
+
+The answer was to reframe proof as **identity, not paperwork**. Clerk handles
+auth with a sign-up allowlist locked to `*@g.bracu.ac.bd`. If Clerk confirms you
+own a university email, that *is* the proof. There is no separate student-ID step
+at all. On first verified sign-in, the Worker marks the user verified and writes
+an audit-log entry as one atomic D1 batch:
+
+```ts
+// idempotent activation, atomic across three writes
+await db.batch([
+  db.update(users).set({ status: "verified" }).where(eq(users.id, uid)),
+  db.insert(userRoles).values({ userId: uid, role: "verified_student" }),
+  db.insert(auditLog).values({ actor: uid, action: "verify.activate" }),
+]);
+```
+
+Less data collected is less data to protect. I loaded a hashed student roster for
+a possible future feature, but deliberately kept it out of the gate.
+
+## Permissions as data, not code
+
+The mistake I wanted to avoid was scattering `if (user.role === "admin")` checks
+through the codebase. So permissions are **data-driven**: a `role_permissions`
+table maps a six-role ladder (`unverified` through `super_admin`) to capabilities
+like `uploads.moderate` and `users.verify`. Adding a capability is a row, not a
+deploy. The API enforces it in exactly one layer, policies, keeping the business
+logic testable.
+
+## What the constraint bought
+
+Constraint-driven design gets a bad reputation as "doing less with less." In
+practice it did the opposite: it forced clarity. Because I could not throw a
+bigger server at a problem, I had to solve it structurally, with the atomic batch,
+the data-driven RBAC, the identity-as-proof gate. The result is
+[live at bracuvault.me](https://www.bracuvault.me/), and the monthly invoice is
+zero.

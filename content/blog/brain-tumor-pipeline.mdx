@@ -1,0 +1,75 @@
+---
+title: "Why separate models beat a shared brain: multi-task learning on brain MRI"
+slug: brain-tumor-pipeline
+date: 2026-03-14
+draft: true
+tags: [computer-vision, deep-learning, medical-imaging, pytorch]
+summary: "Everyone reaches for multi-task learning to share a backbone between segmentation and classification. On the BRISC 2025 brain-MRI dataset, it lost by five points. Here is why, and what the experiment taught me about when not to share."
+related: [brain-tumor-segmentation]
+---
+
+## The seductive idea
+
+You have two tasks on the same image: segment the tumor, and classify it. The
+textbook move is multi-task learning: share one encoder, grow two heads, and let
+the shared representation help both tasks. It is elegant, it is efficient, and on
+the BRISC 2025 dataset it was the wrong call.
+
+This post is about the experiment that talked me out of it.
+
+## The setup
+
+The segmentation model is a five-level U-Net trained under a combined Dice-BCE
+loss. The classifier is a DenseNet-121. Trained separately, they are strong:
+
+| Task | Metric | Score |
+| --- | --- | --- |
+| Segmentation | Test Dice | 88.22% |
+| Segmentation | mIoU | 79.74% |
+| Classification | Accuracy | 97.50% |
+
+Then I built a joint model: one shared encoder, a segmentation decoder, and a
+classification head, trained with a summed loss.
+
+$$
+\mathcal{L}_{joint} = \lambda_{seg}\,\mathcal{L}_{seg} + \lambda_{cls}\,\mathcal{L}_{cls}
+$$
+
+## The result
+
+The joint model lost on both tasks:
+
+| Approach | Segmentation (Dice) | Classification (Acc) |
+| --- | --- | --- |
+| Separate | 83.10% (val) | 97.50% |
+| Joint | 79.02% | 91.69% |
+| Difference | -4.91% | -5.81% |
+
+Nearly six points of classification accuracy, gone. Sharing hurt.
+
+## Why it failed here
+
+Three reasons, in order of how much I think they mattered:
+
+1. **Task interference.** Segmentation wants spatially precise, high-resolution
+   features; classification wants globally pooled, invariant ones. Forcing one
+   encoder to serve both pulls the representation in two directions.
+2. **Loss balancing.** The `lambda` weights are a hyperparameter you now have to
+   tune, and getting them wrong quietly starves one task.
+3. **Dataset scale.** Multi-task learning tends to pay off when data is
+   plentiful enough to learn a genuinely shared structure. With a few thousand
+   image-mask pairs, there was not enough signal to find one.
+
+## The lesson
+
+Multi-task learning is not free. It trades a modeling constraint (shared
+features must serve every task) for a parameter saving. That trade is worth it
+when the tasks are aligned and data is abundant. When the tasks pull apart and
+the dataset is modest, two focused models win.
+
+The unglamorous recommendation I shipped: **train them separately.** U-Net for
+segmentation, DenseNet-121 for classification. It is less clever and it works
+better, which is usually the right trade.
+
+You can page through the actual inference outputs, including the segmentation IoU
+per slice, in the [interactive playground](/playground/brain-tumor).

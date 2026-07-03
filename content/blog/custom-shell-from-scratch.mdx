@@ -1,0 +1,80 @@
+---
+title: "The pipe that never closes: building a UNIX shell in C"
+slug: custom-shell-from-scratch
+date: 2025-11-30
+draft: true
+tags: [systems, c, operating-systems]
+summary: "Making `cat file | grep x | wc -l` work forces you to truly understand fork, exec, pipe, and dup2. The subtle bug that teaches the most is a single file descriptor you forgot to close."
+related: [custom-shell]
+---
+
+## Why a shell teaches everything
+
+A shell is the best guided tour of UNIX process machinery there is. To run one
+piped command line, you have to genuinely understand `fork()`, `execvp()`,
+`pipe()`, `dup2()`, file descriptors, and process waiting. I built one in C with
+no readline or parsing libraries, just POSIX.
+
+Two parts taught me the most: pipelines and signals.
+
+## Pipelines: the descriptor you forgot to close
+
+A pipeline like `cat test.txt | grep Hello | wc -l` is a chain of processes where
+each stage's stdout feeds the next stage's stdin. The plumbing is `pipe()` plus
+`dup2()`:
+
+```c
+int fd[2];
+pipe(fd);
+if (fork() == 0) {              // left side: writes
+    dup2(fd[1], STDOUT_FILENO);
+    close(fd[0]); close(fd[1]); // close BOTH ends in the child
+    execvp(argv[0], argv);
+}
+if (fork() == 0) {              // right side: reads
+    dup2(fd[0], STDIN_FILENO);
+    close(fd[0]); close(fd[1]);
+    execvp(argv2[0], argv2);
+}
+close(fd[0]); close(fd[1]);     // and the parent closes them too
+```
+
+The bug that everyone hits at least once: **a single unclosed write end.** If any
+process, parent or child, still holds `fd[1]` open, the reader never sees EOF. It
+sits there, waiting forever for input that will never come, and your shell hangs.
+The fix is a discipline: every descriptor gets closed in every process that does
+not use it. Once that clicked, pipes stopped being magic.
+
+## Signals: whose Ctrl+C is it?
+
+The subtle question with `Ctrl+C` is ownership. When you press it during a running
+command, SIGINT should kill *that command*, not the shell. If the shell dies every
+time you interrupt a process, it is useless.
+
+So the shell installs its own SIGINT handler that just re-prints the prompt, while
+each child restores the default behavior before `exec`. That way the signal is
+scoped to the foreground child, exactly like a real shell. I verified it with a
+dedicated sleeping tester: start `sleep 10`, hit Ctrl+C, watch the child die and
+the prompt return.
+
+## Conditional chaining is a tiny interpreter
+
+Supporting `&&` (run the next command only if this one succeeded) means reading
+child exit codes with `waitpid` status macros and short-circuiting on failure:
+
+```c
+waitpid(pid, &status, 0);
+if (WIFEXITED(status) && WEXITSTATUS(status) != 0 && op == AND) {
+    break;  // stop the chain
+}
+```
+
+It is a small decision, but it is the moment the shell stops being a command
+runner and becomes a tiny language interpreter.
+
+## What carried over
+
+After implementing this, every higher-level abstraction I use, subprocess
+libraries, container runtimes, CI pipelines, reads differently. I know what is
+underneath, because I built a small version of it. The
+[full project is on GitHub](https://github.com/ImtiazHossain-Eshan/Custom_Shell).

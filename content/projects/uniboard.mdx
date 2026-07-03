@@ -1,0 +1,67 @@
+---
+title: UniBoard
+slug: uniboard
+category: fullstack
+tagline: A centralized digital noticeboard for campus clubs and events, with verified club dashboards, RSVP, and engagement analytics.
+summary: A PHP and MySQL platform where verified university clubs publish events and students explore, follow, RSVP, and sync to their calendars, with advanced filtering and engagement analytics.
+period: 2025
+featured: 8
+status: shipped
+cover: /assets/projects/uniboard/landing.webp
+stack:
+  - PHP
+  - MySQL
+  - JavaScript
+  - Tailwind CSS
+  - Apache
+links:
+  github: https://github.com/ImtiazHossain-Eshan/UniBoard
+metrics:
+  - label: club dashboards
+    value: verified
+    detail: create/edit/manage
+  - label: discovery
+    value: filtered
+    detail: club/date/type/location
+  - label: rsvp
+    value: reminders
+    detail: reserve + calendar sync
+  - label: analytics
+    value: engagement
+    detail: reach + attendance
+gallery:
+  - src: /assets/projects/uniboard/browse-events.webp
+    caption: Browsing and filtering campus events
+  - src: /assets/projects/uniboard/explore-clubs.webp
+    caption: Exploring clubs and their upcoming activities
+architecture:
+  - { id: student, label: "Students", sub: "follow + rsvp", col: 0, row: 0, to: [app] }
+  - { id: club, label: "Verified Clubs", sub: "manage events", col: 0, row: 2, to: [app] }
+  - { id: app, label: "PHP App", sub: "auth + feed", col: 1, row: 1, to: [db] }
+  - { id: db, label: "MySQL", sub: "events + rsvp", col: 2, row: 1, to: [notif] }
+  - { id: notif, label: "Notifications", sub: "followed clubs", col: 3, row: 1, to: [] }
+---
+
+## The problem
+
+Campus event information is scattered across Facebook groups, physical posters, and word of
+mouth, so students miss things they would have wanted to attend and clubs struggle to reach
+their audience. UniBoard centralizes this into a single digital noticeboard: clubs publish,
+students discover.
+
+## Two audiences, two experiences
+
+**Verified clubs** get a management dashboard to create, edit, and manage events, upload
+posters and media, and read engagement analytics (reach, attendance, participation).
+**Students** get advanced search and filtering by club, date, type, or location, a
+personalized feed tuned to their interests, real-time notifications for clubs they follow, an
+RSVP-and-reminder system, and calendar sync so events land in their personal schedule.
+
+## Engineering notes
+
+UniBoard runs on a classic PHP, MySQL, and Apache stack with a normalized relational schema
+(modeled out in an ER diagram) covering clubs, events, RSVPs, and follow relationships. The
+verification step for clubs matters: it is what keeps the board trustworthy, so that a listed
+event actually comes from the organization it claims. University-login integration secures
+access, and the responsive front end works across devices, which is essential for a tool
+students reach for on their phones.

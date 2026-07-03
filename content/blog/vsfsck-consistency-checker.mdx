@@ -1,0 +1,78 @@
+---
+title: "The file system is just bytes: writing an fsck from scratch"
+slug: vsfsck-consistency-checker
+date: 2025-12-15
+draft: true
+tags: [systems, c, file-systems]
+summary: "A file-system consistency checker has to hold two contradictory views of the disk, what the bitmaps claim and what the inodes actually reference, and reconcile them bit by bit. Here is what that taught me about metadata."
+related: [vsfsck]
+---
+
+## What an fsck actually does
+
+When a file system is interrupted mid-write, its on-disk metadata can start
+telling inconsistent stories. A bitmap says a block is free while an inode still
+points at it. Two inodes claim the same block. A referenced block sits outside the
+valid data region. Tools like `fsck` walk the raw disk image and reconcile these
+contradictions. VSFSck does exactly this for the Very Simple File System, operating
+directly on a binary `vsfs.img`.
+
+## Everything is a seek and a read
+
+The image is 64 blocks of 4096 bytes each, with a fixed layout:
+
+| Blocks | Contents |
+| --- | --- |
+| 0 | Superblock |
+| 1 | Inode bitmap |
+| 2 | Data bitmap |
+| 3-7 | Inode table (256-byte inodes) |
+| 8-63 | Data region |
+
+There is no file API here. Everything the checker knows, it learns by seeking to
+an offset and reading a struct out of raw bytes. That is the whole point: this is
+the layer *underneath* `open()` and `read()`.
+
+## The interesting part is the cross-check
+
+Validating the superblock (magic number `0xd34d`, block size 4096) is
+straightforward. The genuinely interesting validators are the ones that hold two
+views of the disk at once and reconcile them:
+
+1. **Data bitmap consistency** goes both directions: every block marked used must
+   be referenced by a valid inode, *and* every block an inode references must be
+   marked used.
+2. **Inode bitmap consistency**: every set bit must map to an inode with
+   `link_count > 0` and `deletion_time == 0`.
+3. **Duplicate blocks**: no data block may be claimed by more than one inode.
+4. **Bad blocks**: every reference must land inside the 8-63 data region.
+
+That bidirectional check is where the mental model has to be precise. You are not
+validating one structure; you are asserting that two independently-maintained
+structures agree, and repairing them when they do not.
+
+## Off-by-one is fatal here
+
+In file-system code, an off-by-one in block indexing does not produce a wrong
+pixel, it corrupts the interpretation of everything downstream. So the boundaries
+(the five inode-table blocks, the 8-63 data region) become named constants, and
+every reference is validated against them:
+
+```c
+#define DATA_START 8
+#define DATA_END   63
+if (block < DATA_START || block > DATA_END) {
+    report_bad_block(inode_idx, block);
+}
+```
+
+Debugging happened at the hex level with `ghex`, staring at raw bytes to confirm
+the checker's view matched the disk's reality.
+
+## The takeaway
+
+"The file system is just bytes" is a sentence you can nod at, or you can internalize
+by writing the tool that treats it literally. After VSFSck, storage abstractions
+feel less like magic and more like a well-documented byte layout with rules I now
+know how to verify. The
+[code is on GitHub](https://github.com/ImtiazHossain-Eshan/A-Consistency-Checker-for-Very-Simple-File-System-VSFS-).

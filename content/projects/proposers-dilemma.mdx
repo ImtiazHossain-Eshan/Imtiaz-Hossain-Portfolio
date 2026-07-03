@@ -1,0 +1,58 @@
+---
+title: The Proposer's Dilemma
+slug: proposers-dilemma
+category: games
+tagline: An interactive game-theory simulation of sequential bargaining, where fairness and rational self-interest collide round after round.
+summary: A playable simulation of the proposer-responder bargaining game exploring Nash equilibrium and backward induction, with multi-round play, scoring, and visual feedback.
+period: 2026
+featured: 14
+status: shipped
+cover: /assets/projects/games/proposers-dilemma-menu.webp
+stack:
+  - Python
+  - Game Theory
+  - Simulation
+links:
+  github: https://github.com/ImtiazHossain-Eshan/The-Proposer-s-Dilemma-game
+metrics:
+  - label: rounds
+    value: multi
+    detail: repeated sequential play
+  - label: roles
+    value: "2"
+    detail: proposer + responder
+  - label: theory
+    value: Nash / BI
+    detail: equilibrium concepts
+gallery: []
+architecture:
+  - { id: proposer, label: "Proposer", sub: "offers a split", col: 0, row: 1, to: [decision] }
+  - { id: decision, label: "Responder", sub: "accept / reject", col: 1, row: 1, to: [payoff] }
+  - { id: payoff, label: "Payoffs", sub: "scored per round", col: 2, row: 1, to: [next] }
+  - { id: next, label: "Next Round", sub: "strategy evolves", col: 3, row: 1, to: [] }
+---
+
+## The game behind the game
+
+In the classic proposer-responder setup, one player proposes how to split a resource and the
+other accepts or rejects; rejection leaves both with nothing. Pure rationality says a
+responder should accept any nonzero offer, so **backward induction** predicts the proposer
+offers the minimum. Real humans reject unfair splits out of spite, and that tension between
+the **Nash equilibrium** and observed fairness is one of behavioral economics' most studied
+results.
+
+## What I built
+
+An interactive simulation where players take both roles across multiple rounds: propose
+splits, respond to offers, and watch a scoring system track how strategies perform over time.
+Visual feedback makes the payoff consequences legible round by round, so the theory stops
+being abstract: you *feel* the pull between maximizing your own take and making offers the
+other side will actually accept.
+
+## Why it is interesting to build
+
+Encoding a game-theory experiment forces precision about the rules: what information each
+player sees, when decisions lock in, and how repeated play changes incentives compared to the
+one-shot game. Repeated rounds shift optimal behavior toward fairness because reputation
+starts to matter, and the simulation makes that emergent shift observable in the score
+trajectories rather than asserting it.

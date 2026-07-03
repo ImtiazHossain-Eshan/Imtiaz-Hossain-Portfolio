@@ -1,0 +1,74 @@
+---
+title: Custom UNIX Shell
+slug: custom-shell
+category: systems
+tagline: A UNIX shell in C with pipes, redirection, chaining, history, and signal handling, built from fork(), execvp(), and careful file-descriptor bookkeeping.
+summary: A lightweight UNIX shell implemented in C supporting command execution, piping, I/O redirection, sequential and conditional chaining, history, and SIGINT handling.
+period: 2025
+featured: 11
+status: coursework
+stack:
+  - C
+  - POSIX
+  - fork/exec
+  - pipes
+  - signals
+  - GCC
+links:
+  github: https://github.com/ImtiazHossain-Eshan/Custom_Shell
+metrics:
+  - label: operators
+    value: "| > >> < ; &&"
+    detail: full parsing + execution
+  - label: builtins
+    value: cd, history
+    detail: plus exit
+  - label: signals
+    value: SIGINT
+    detail: ctrl+c handled
+  - label: language
+    value: C
+    detail: no libraries, raw POSIX
+architecture:
+  - { id: input, label: "Read Line", sub: "prompt loop", col: 0, row: 1, to: [parse] }
+  - { id: parse, label: "Parser", sub: "tokenize ops", col: 1, row: 1, to: [builtin, exec] }
+  - { id: builtin, label: "Builtins", sub: "cd / history", col: 2, row: 0, to: [] }
+  - { id: exec, label: "fork + execvp", sub: "child procs", col: 2, row: 2, to: [redir] }
+  - { id: redir, label: "dup2 Plumbing", sub: "pipes + files", col: 3, row: 2, to: [] }
+---
+
+## Why build a shell
+
+A shell is the best possible tour of UNIX process machinery: to make `cat file | grep x | wc
+-l` work you have to genuinely understand `fork()`, `execvp()`, `pipe()`, `dup2()`, file
+descriptors, and process waiting. This project implements a working interactive shell in C
+with no parsing or readline libraries, just POSIX.
+
+## What it supports
+
+- **Command execution** of anything on `PATH` (`ls -l`, `pwd`, ...)
+- **Piping** with `|`, including multi-stage pipelines like `cat test.txt | grep Hello | wc -l`
+- **Redirection**: output `>`, append `>>`, and input `<`
+- **Chaining**: sequential `;` and conditional `&&` (`mkdir temp && cd temp && touch hello.txt`)
+- **Builtins**: `cd` and `history` (which must run in the parent process, since a child
+  changing its own working directory or reading its own history helps nobody)
+- **Signal handling**: Ctrl+C interrupts the foreground child without killing the shell
+  itself, verified with a dedicated sleep-based tester program
+
+## The parts that taught the most
+
+**Pipelines** are where the file-descriptor bookkeeping gets honest. Each stage needs its
+stdout wired to the write end of one pipe and its stdin to the read end of the previous one,
+and every unused descriptor must be closed in both parent and children, because a single
+leaked write-end keeps the reader blocked forever waiting for EOF.
+
+**Signal handling** has a subtle ownership question: SIGINT should kill the running child,
+not the shell. The shell installs its own handler that re-prompts, while children restore
+default behavior, which is exactly how real shells keep `Ctrl+C` scoped.
+
+**Conditional chaining** (`&&`) requires reading child exit codes via `waitpid` status
+macros and short-circuiting the rest of the line on failure, a small interpreter decision
+that makes the shell feel real.
+
+The code is organized as `shell.c` (main loop, signals, parsing), `command.c` (tokenization,
+builtins, dispatch), and `execution.c` (redirection and pipe plumbing).

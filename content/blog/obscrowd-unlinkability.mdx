@@ -1,0 +1,66 @@
+---
+title: "Protect the edit, not the pixel: rethinking biometric privacy for group photos"
+slug: obscrowd-unlinkability
+date: 2026-06-01
+draft: true
+tags: [research, computer-vision, privacy, diffusion]
+summary: "Most image-protection methods try to stop generative editing. Obscrowd does the opposite: it lets the edit happen and instead breaks the face-recognition link back to the real people, across every face in a group photo at once."
+related: []
+---
+
+## A different threat model
+
+Deepfake research usually asks: is this image fake? Biometric privacy under
+generative editing asks a different, subtler question: even after someone edits my
+photo, can a face-recognition system still match it back to *me*?
+
+Often, yes. Generative editors change pose, expression, or background while leaving
+enough biometric signal intact that the edited output stays **re-linkable** to the
+original person, someone who never consented to the edit. That is the gap Obscrowd
+targets.
+
+## Unlinkability, not un-editability
+
+The framing shift at the core of this work: we do not try to prevent the edit.
+Most prior methods do, and they tend to assume a single subject and one narrow
+editing pipeline. Real photos are group shots with many faces and an open-ended
+space of edits.
+
+Instead, Obscrowd lets the image be edited and reduces the ability of
+face-recognition systems to re-link the result to the real people, while keeping
+the protected image **visually faithful** to the original. Every detected face in a
+group image is protected jointly by a single imperceptible, face-localized
+perturbation guided by soft masks.
+
+## The pipeline
+
+Protection is produced by a teacher-student-refinement pipeline:
+
+- A **diffusion-guided teacher** generates strong, image-specific protection.
+- A **lightweight student generator** distills the teacher for efficient
+  inference-time deployment.
+- An **inference-time refinement** stage sharpens the perturbation within a bounded
+  perceptual budget.
+
+Training combines teacher imitation with identity-disruption supervision from an
+ensemble of face-recognition models and differentiable editing attacks, so the
+perturbation is optimized to survive realistic edits rather than one fixed one.
+
+## Does it work?
+
+In the headline example, an instruct-pix2pix smile edit that leaves
+face-recognition similarity at **0.957** on an unprotected image drops it to
+**0.138** once protected, a large identity-disruption effect from a perturbation
+that is visually imperceptible. The behavior holds across diverse editing and
+processing conditions, and carries over to single-portrait settings too.
+
+## The honest part
+
+The paper is explicit that **reconstruction and compression remain open
+challenges**. A determined adversary with strong purification or aggressive
+re-compression can erode the protection. Naming that envelope is part of the
+contribution: a privacy method that overclaims its guarantees is more dangerous
+than one that states exactly where it stops working.
+
+The full abstract, figures, and citation are on the
+[research page](/research).

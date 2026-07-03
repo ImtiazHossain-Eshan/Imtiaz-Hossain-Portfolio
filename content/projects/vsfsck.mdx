@@ -1,0 +1,72 @@
+---
+title: VSFSck
+slug: vsfsck
+category: systems
+tagline: A file-system consistency checker in C that validates and repairs superblocks, bitmaps, inodes, and data blocks in a 64-block virtual file system.
+summary: An fsck-style tool for the Very Simple File System that validates the superblock, cross-checks inode and data bitmaps against reality, and detects duplicate and bad block references in a raw binary image.
+period: 2025
+featured: 12
+status: coursework
+stack:
+  - C
+  - File Systems
+  - Binary I/O
+  - Bitmaps
+  - GCC
+links:
+  github: https://github.com/ImtiazHossain-Eshan/A-Consistency-Checker-for-Very-Simple-File-System-VSFS-
+metrics:
+  - label: image
+    value: 64 blocks
+    detail: 4096 B each, 256 KiB total
+  - label: inode size
+    value: 256 B
+    detail: blocks 3-7 inode table
+  - label: checks
+    value: "5 validators"
+    detail: superblock to bad blocks
+  - label: magic
+    value: "0xd34d"
+    detail: superblock signature
+architecture:
+  - { id: img, label: "vsfs.img", sub: "raw binary", col: 0, row: 1, to: [sb] }
+  - { id: sb, label: "Superblock", sub: "magic 0xd34d", col: 1, row: 1, to: [ibmp, dbmp] }
+  - { id: ibmp, label: "Inode Bitmap", sub: "vs inode table", col: 2, row: 0, to: [report] }
+  - { id: dbmp, label: "Data Bitmap", sub: "vs references", col: 2, row: 2, to: [report] }
+  - { id: report, label: "Report + Fix", sub: "dup/bad blocks", col: 3, row: 1, to: [] }
+---
+
+## What an fsck actually does
+
+When a file system is interrupted mid-write, its on-disk metadata can disagree with itself: a
+bitmap says a block is free while an inode still points at it, or two inodes claim the same
+block. Tools like `fsck` walk the raw image and reconcile these stories. VSFSck implements
+that logic for the Very Simple File System (VSFS), a teaching file system with a fixed
+layout, operating directly on a binary `vsfs.img`.
+
+## The on-disk layout
+
+The image is 64 blocks of 4096 bytes: block 0 is the superblock, block 1 the inode bitmap,
+block 2 the data bitmap, blocks 3-7 the inode table (256-byte inodes), and blocks 8-63 the
+data region. Everything the checker knows, it learns by seeking and reading structs out of
+this raw layout, there is no file API to lean on.
+
+## The five validators
+
+1. **Superblock validation:** magic number `0xd34d`, block size 4096, total blocks 64, valid
+   metadata pointers, and sane inode size and count.
+2. **Data bitmap consistency:** every block marked used must be referenced by a valid inode,
+   and every block an inode references must be marked used, checked in both directions.
+3. **Inode bitmap consistency:** every set bit must correspond to an inode with
+   `link_count > 0` and `deletion_time == 0`.
+4. **Duplicate block detection:** no data block may be claimed by more than one inode.
+5. **Bad block detection:** every reference must land inside the valid data region (8-63).
+
+## What it taught
+
+The interesting engineering is in the **cross-checks**: each rule requires holding two views
+of the file system (what the bitmaps claim versus what the inode table actually references)
+and reconciling them bit by bit. Off-by-one errors in block indexing corrupt everything
+downstream, so the code treats boundaries (the 8-63 data region, the five inode-table blocks)
+as named constants and validates against them everywhere. Debugging happened at the hex level
+with `ghex`, which is the honest way to learn what "the file system is just bytes" means.

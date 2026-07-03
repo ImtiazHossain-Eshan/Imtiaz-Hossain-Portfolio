@@ -1,0 +1,105 @@
+---
+title: Software Quality Prediction
+slug: software-quality-prediction
+category: ai
+tagline: An honest comparative study of predicting code quality from nine metrics, where the best model reaches only 0.4418 F1, and that is the finding.
+summary: A supervised and unsupervised machine-learning study on 1,600 code-metric samples, where a decision tree tops out at 0.4418 weighted F1 and k-means confirms the code-metric signal is genuinely weak.
+period: 2025
+featured: 9
+status: research
+cover: /assets/lab/software-quality/kmeans-pca.webp
+stack:
+  - Python
+  - scikit-learn
+  - Neural Network
+  - Decision Tree
+  - Random Forest
+  - KNN
+  - k-means
+  - PCA
+links:
+  paper: /assets/papers/software-quality-prediction-report.pdf
+  demo: /playground/software-quality
+metrics:
+  - label: best weighted f1
+    value: "0.4418"
+    detail: decision tree
+  - label: samples
+    value: "1,600"
+    detail: 9 code metrics each
+  - label: micro-avg auc
+    value: "~0.60"
+    detail: all models, moderate
+  - label: classes
+    value: "3"
+    detail: high / medium / low
+gallery:
+  - src: /assets/lab/software-quality/performance-comparison.webp
+    caption: "Model performance comparison across four classifiers"
+  - src: /assets/lab/software-quality/correlation-heatmap.webp
+    caption: "Correlation matrix of the nine code metrics"
+  - src: /assets/lab/software-quality/elbow-method.webp
+    caption: "Elbow method confirms k=3, matching the three quality tiers"
+  - src: /assets/lab/software-quality/cm-decision-tree.webp
+    caption: "Decision tree confusion matrix, the most balanced of the four"
+architecture:
+  - { id: metrics, label: "Code Metrics", sub: "9 features", col: 0, row: 1, to: [clean] }
+  - { id: clean, label: "Preprocess", sub: "impute/winsorize", col: 1, row: 1, to: [scale] }
+  - { id: scale, label: "StandardScaler", sub: "stratified split", col: 2, row: 1, to: [sup, unsup] }
+  - { id: sup, label: "4 Classifiers", sub: "nn/knn/dt/rf", col: 3, row: 0, to: [] }
+  - { id: unsup, label: "k-means", sub: "k=3 + pca", col: 3, row: 2, to: [] }
+---
+
+## The premise, and the honest result
+
+Software-quality assurance is expensive and inconsistent when done by hand, so the appeal of
+predicting quality from cheap code metrics is obvious. This study evaluates whether four
+machine-learning models can classify code modules as High, Medium, or Low quality from nine
+metrics, and the honest answer is: **not well**. The best model, a decision tree, reaches only
+**0.4418 weighted F1**. Rather than bury that, I made the *why* the point of the study.
+
+## The dataset
+
+1,600 samples, nine features: Lines of Code, Cyclomatic Complexity, Number of Functions, Code
+Churn, Comment Density, Number of Bugs, Has Unit Tests, Code Owner Experience, and the Quality
+Label target. The classes are nicely balanced (566 High, 533 Low, 501 Medium), so imbalance is
+not the excuse.
+
+Preprocessing was careful: mode imputation for the 80 missing values in three columns,
+**Winsorizing** at the 1st and 99th percentiles to tame outliers in Code Churn and Number of
+Functions, an absolute-value transform on Code Churn (negative values meant deleted lines),
+StandardScaler normalization, and a stratified 90/10 split.
+
+## Results
+
+| Model | Accuracy | Weighted F1 |
+| --- | --- | --- |
+| Decision Tree | 0.44 | 0.4418 |
+| Random Forest | 0.36 | 0.35 |
+| Neural Network | 0.35 | 0.35 |
+| KNN | 0.31 | 0.30 |
+
+All four models cluster near random for a three-class problem, with micro-average AUC around
+0.60, indicating only moderate discriminative power. Interestingly, the simple decision tree
+beat the random forest and the neural network here, and showed the most balanced per-class
+behavior, while the others biased toward particular classes.
+
+## What the unsupervised view confirmed
+
+To check whether the labels were the problem or the features were, I ran **k-means** without
+using the labels. The elbow method cleanly suggested **k=3**, matching the three quality
+tiers, which is encouraging. But projecting the clusters with **PCA** revealed heavy overlap
+between them. The natural structure in the code metrics does not line up with the quality
+labels. That is the crux: the features and the target are only weakly related.
+
+## Why I present this as a finding
+
+Predicting software quality from code metrics alone is genuinely hard. The likely culprits:
+quality is partly subjective and inconsistently labeled, the truly predictive signals
+(version history, developer activity, review data) are not in these nine metrics, and the
+relationships that do exist are non-linear in ways these models struggle to capture.
+
+A weaker version of this project would have cherry-picked a metric to look impressive. The
+stronger, more useful version reports the ceiling honestly and points at the real gap:
+better features, not fancier models. The [playground](/playground/software-quality) lets you
+explore the cluster structure and the correlation matrix to see the weak signal for yourself.

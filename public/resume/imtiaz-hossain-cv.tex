@@ -1,0 +1,82 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1.6cm]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+\definecolor{accent}{HTML}{0B5A7A}
+\titleformat{\section}{\large\bfseries\color{accent}}{}{0em}{}[\vspace{-0.6em}\rule{\linewidth}{0.4pt}]
+\titlespacing{\section}{0pt}{1.1em}{0.5em}
+\setlist[itemize]{leftmargin=1.1em,itemsep=0.15em,topsep=0.2em}
+\pagestyle{empty}
+\newcommand{\entry}[3]{\textbf{#1} \hfill \textit{#3}\\[-0.2em]{\color{accent}#2}\\[0.2em]}
+
+\begin{document}
+
+\begin{center}
+  {\huge\bfseries Imtiaz Hossain}\\[0.3em]
+  {\color{accent} AI Engineer $\cdot$ Machine Learning $\cdot$ Computer Vision $\cdot$ NLP $\cdot$ Research}\\[0.4em]
+  Dhaka, Bangladesh $\cdot$ \href{mailto:imtiaz.hossain.eshan@gmail.com}{imtiaz.hossain.eshan@gmail.com}\\
+  \href{https://github.com/ImtiazHossain-Eshan}{github.com/ImtiazHossain-Eshan} $\cdot$
+  \href{https://www.linkedin.com/in/imtiazhossaineshan/}{linkedin.com/in/imtiazhossaineshan} $\cdot$
+  \href{https://scholar.google.com/citations?user=CIjeZSsAAAAJ}{Google Scholar}
+\end{center}
+
+\section{Summary}
+AI Engineer and researcher specializing in computer vision, NLP, and deep learning, with a track record of production-grade full-stack systems and rigorous, reproducible ML studies. I train and evaluate models end to end (88.22\% test Dice for brain-tumor segmentation, 97.40\% accuracy for AI-text detection, 0.9376 macro-F1 across a 27-run NLP benchmark) and ship systems that run on zero-cost cloud infrastructure. My research advances biometric privacy under generative editing.
+
+\section{Technical Skills}
+\begin{itemize}
+  \item \textbf{Languages:} Python, TypeScript, C, JavaScript, SQL, PHP
+  \item \textbf{AI / ML:} PyTorch, scikit-learn, HuggingFace Transformers, OpenCV, gensim, NumPy, pandas
+  \item \textbf{Models \& methods:} U-Net / Attention U-Net, DenseNet / EfficientNet / MobileNet, BERT / RNN / GRU / LSTM, Random Forest / SVM / k-means, diffusion \& adversarial ML, RAG
+  \item \textbf{Web \& backend:} Next.js, React, Node.js, Express, Hono, MongoDB, MySQL, Drizzle
+  \item \textbf{Cloud \& tooling:} Cloudflare Workers / D1 / R2, Vercel, Docker, Git, Linux, PWA
+\end{itemize}
+
+\section{Engineering \& Research Experience}
+\entry{AI Researcher (Biometric Privacy)}{Independent Research, BRAC University}{2026}
+\begin{itemize}
+  \item Designed Obscrowd, a privacy framework for multi-portrait biometric unlinkability under generative editing, protecting every detected face in a group image with a single imperceptible, mask-guided perturbation.
+  \item Engineered a teacher-student-refinement pipeline (diffusion-guided teacher, lightweight student generator, inference-time refinement) trained against a face-recognition ensemble and differentiable editing attacks.
+  \item Reduced face-recognition similarity from 0.957 to 0.138 after generative edits while keeping the protected image visually faithful.
+\end{itemize}
+
+\entry{Machine Learning Engineer (Medical Imaging)}{Brain Tumor Segmentation \& Classification}{2026}
+\begin{itemize}
+  \item Implemented and compared U-Net, Attention U-Net, and three CNN classifiers on the BRISC 2025 MRI dataset in PyTorch.
+  \item Achieved 88.22\% test Dice, 79.74\% mIoU, 99.61\% pixel accuracy, and 97.50\% four-class classification accuracy on 860 unseen samples.
+  \item Ran a 20-config hyperparameter study; showed separate task-specific training beats joint multi-task learning by $\sim$5 points.
+\end{itemize}
+
+\entry{NLP Engineer}{News Classification \& AI-Text Detection}{2025 -- 2026}
+\begin{itemize}
+  \item Built a 27-experiment benchmark (9 architectures $\times$ 3 preprocessing pipelines) on 102k headlines: 0.9376 macro-F1 (BERT-Base), 0.9214 (Bi-GRU in 19s).
+  \item Engineered 28 stylometric features with mRMR/RFE selection, reaching 97.40\% accuracy on HC3 and quantifying a cross-generator generalization gap.
+\end{itemize}
+
+\entry{Full-Stack Engineer}{BRACU Vault $\cdot$ Polaris $\cdot$ E-GamerHub}{2025 -- 2026}
+\begin{itemize}
+  \item Built BRACU Vault on Cloudflare's free tier (Workers + Hono, D1, R2, Clerk) with data-driven six-role RBAC and email-gated uploads.
+  \item Engineered Polaris, an AI academic strategist using Gemini structured-JSON output, RAG, and a transparent probability model with no-API-key fallback.
+  \item Developed E-GamerHub, a MERN platform with Socket.IO messaging, RBAC moderation, and Groq Llama 3 natural-language search.
+\end{itemize}
+
+\section{Research}
+\textbf{Obscrowd: Multi-Portrait Biometric Unlinkability under Generative Editing.} Working paper, 2026. Joint multi-face privacy protection via a teacher-student-refinement pipeline.
+
+\section{Selected Additional Projects}
+\begin{itemize}
+  \item Custom UNIX shell in C (pipes, redirection, chaining, signal handling); VSFSck file-system consistency checker.
+  \item OpenGL games from primitives (midpoint line algorithm, AABB collision); software quality prediction ML study.
+\end{itemize}
+
+\section{Education}
+\textbf{B.Sc. in Computer Science and Engineering}, BRAC University, Dhaka, Bangladesh \hfill CGPA 3.7+\\
+Relevant coursework: Machine Learning, Artificial Intelligence, Computer Graphics, Operating Systems, Database Systems, Algorithms.
+
+\section{Certifications}
+Understanding Machine Learning $\cdot$ Data Manipulation in Python $\cdot$ Cleaning Data in Python (DataCamp)
+
+\end{document}

@@ -1,0 +1,63 @@
+---
+title: Cholo
+slug: cholo
+category: fullstack
+tagline: A ride-sharing management system for BRAC University students, with verified registration, recurring trips, and post-trip ratings.
+summary: A database-driven ride-sharing platform where BRACU students create, join, and manage shared vehicle trips, built on a normalized MySQL schema with PHP, for the CSE370 Database Systems course.
+period: 2025
+featured: 10
+status: coursework
+cover: /assets/projects/cholo/landing.webp
+stack:
+  - PHP
+  - MySQL
+  - HTML/CSS
+  - SQL
+links:
+  github: https://github.com/ImtiazHossain-Eshan/Cholo_Ride-Sharing-App
+metrics:
+  - label: verification
+    value: G-Suite
+    detail: BRACU email gate
+  - label: schema
+    value: normalized
+    detail: relational design
+  - label: trips
+    value: recurring
+    detail: scheduled + one-off
+  - label: trust
+    value: ratings
+    detail: post-trip reviews
+architecture:
+  - { id: student, label: "Students", sub: "gsuite verified", col: 0, row: 1, to: [app] }
+  - { id: app, label: "PHP App", sub: "trips + auth", col: 1, row: 1, to: [db] }
+  - { id: db, label: "MySQL", sub: "normalized schema", col: 2, row: 1, to: [ratings] }
+  - { id: ratings, label: "Ratings", sub: "post-trip", col: 3, row: 1, to: [] }
+  - { id: admin, label: "Admin", sub: "maintenance", col: 1, row: 0, to: [db] }
+---
+
+## The idea
+
+Dhaka commutes are long and expensive, and thousands of BRAC University students travel
+similar routes every day. Cholo ("let's go" in Bangla) is a ride-sharing management system
+that lets students create shared vehicle trips, join others' trips, and split the cost,
+scoped to the university community so riders know who they are traveling with.
+
+## Trust through verification and ratings
+
+Two mechanisms make community ride-sharing viable. First, **registration is gated by BRACU
+G-Suite verification**, so every account maps to a real student. Second, a **rating and
+comment system** after each trip builds a reputation layer: riders and trip creators review
+each other, which keeps behavior accountable over time.
+
+## Database-first design
+
+Built for the CSE370 Database Systems course, the system's core is a **normalized MySQL
+schema**: students (with support for multiple phone numbers per student, a deliberately
+modeled one-to-many), trips with date, time, fare, and meetup location, recurring trip
+schedules, private-vehicle details, ratings, and an admin role for system maintenance. The
+PHP layer handles authentication, trip creation and joining, and the rating flow on top.
+
+Working within course constraints (no framework, plain PHP and SQL) forced clarity about the
+data model itself, the part of a system that outlives any particular framework choice. I
+handled the database design and backend, with teammates on the front end.

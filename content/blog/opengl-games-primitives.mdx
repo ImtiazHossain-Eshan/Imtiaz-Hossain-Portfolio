@@ -1,0 +1,78 @@
+---
+title: "A raindrop is a line segment: what building OpenGL games from primitives taught me"
+slug: opengl-games-primitives
+date: 2026-05-08
+draft: true
+tags: [graphics, game-dev, opengl, python]
+summary: "No sprites, no textures, no engine. When every raindrop and laser bolt has to be drawn from points and lines you place by algorithm, even a simple game becomes an exercise in computational geometry."
+related: [opengl-games, proposers-dilemma]
+---
+
+## The constraint is the curriculum
+
+My computer graphics course banned the shortcuts: no sprites, no textures, no
+engine. Everything on screen had to be built from OpenGL primitives, points and
+lines, positioned by algorithms I wrote myself. It sounds limiting. It is actually
+the fastest way to understand how graphics really work, because you cannot hide
+behind an abstraction that does the hard part for you.
+
+I built three games under that rule.
+
+## Drawing a line is not free
+
+The foundational realization: even drawing a straight line is an algorithm. To
+render a diagonal in *Catch the Diamonds*, I implemented the **midpoint line
+algorithm**, the classic incremental technique that decides, pixel by pixel,
+whether to step horizontally or diagonally, generalized across all eight octants
+so it handles any slope:
+
+```
+for each x from x0 to x1:
+    plot(x, y)
+    if d > 0:          # midpoint below the line
+        y += 1
+        d += 2*(dy - dx)
+    else:
+        d += 2*dy
+```
+
+Once you have written this, you understand what a GPU does millions of times a
+frame. The rasterizer stops being a black box.
+
+## Physics you can see
+
+*House in Rainfall* is an environment sim where rain direction responds to wind.
+Each raindrop is a line segment whose position updates every frame; arrow keys
+progressively bend the whole field left or right, and the scene interpolates
+smoothly between day and night rather than snapping. There is no physics engine,
+just position updates and a continuous color interpolation you write by hand, which
+is exactly why you understand every frame.
+
+## Collision without a library
+
+Catching a falling diamond needs **AABB collision**, testing whether two
+axis-aligned bounding boxes overlap:
+
+```python
+def collides(a, b):
+    return (a.left < b.right and a.right > b.left and
+            a.top > b.bottom and a.bottom < b.top)
+```
+
+Four comparisons. That is the entire trick behind a huge fraction of 2D game
+collision, and building it once demystifies it forever.
+
+## The game loop is yours
+
+*Star Wars*, the third game, is a shooter with a hand-rolled GLUT game loop:
+keyboard-state tracking for smooth simultaneous move-and-shoot, projectile
+management, hit detection, lives, and score. Writing the loop yourself, the part an
+engine normally owns, is what made later graphics and game work legible to me.
+
+## Why this mattered
+
+Every abstraction I use now, a sprite batch, a physics engine, a shader, sits on
+top of something I have implemented a small version of. When you have drawn a line
+from first principles and written your own collision test, the tools stop being
+magic and start being conveniences you understand. The
+[assignments and gameplay are documented in the case study](/projects/opengl-games).

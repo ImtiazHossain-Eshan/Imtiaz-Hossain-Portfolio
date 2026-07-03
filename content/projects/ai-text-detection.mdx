@@ -1,0 +1,119 @@
+---
+title: AI-Generated Text Detection
+slug: ai-text-detection
+category: ai
+tagline: Detecting ChatGPT-written text from 28 handcrafted statistical features, and an honest look at why detection breaks across generators.
+summary: A comparative study of four classical classifiers on 28 stylometric features, reaching 97.40% accuracy on HC3 with Random Forest, and quantifying a severe cross-generator generalization gap on the M4/SemEval-2024 benchmark.
+period: 2026
+featured: 5
+status: research
+cover: /assets/lab/text-detection/tsne-2d.webp
+stack:
+  - Python
+  - scikit-learn
+  - Random Forest
+  - SVM
+  - AdaBoost
+  - mRMR
+  - RFE
+  - t-SNE
+links:
+  paper: /assets/papers/ai-text-detection-report.pdf
+  demo: /playground/text-detection
+metrics:
+  - label: hc3 accuracy
+    value: "97.40%"
+    detail: Random Forest, in-domain
+  - label: features
+    value: "28"
+    detail: 4 interpretable categories
+  - label: cross-gen drop
+    value: "to 20-30%"
+    detail: on Bloomz-generated text
+  - label: compute
+    value: CPU-only
+    detail: no GPU inference needed
+gallery:
+  - src: /assets/lab/text-detection/feature-selection.webp
+    caption: "Feature ranking: mRMR mutual information vs RFE importance"
+  - src: /assets/lab/text-detection/cm-hc3.webp
+    caption: "Confusion matrices for all four classifiers on HC3"
+  - src: /assets/lab/text-detection/roc-hc3.webp
+    caption: "ROC curves with AUC on the HC3 test set"
+  - src: /assets/lab/text-detection/feature-distributions.webp
+    caption: "Human vs AI distributions for the top-ranked features"
+architecture:
+  - { id: text, label: "Raw Text", sub: "hc3 / m4", col: 0, row: 1, to: [feat] }
+  - { id: feat, label: "28 Features", sub: "lexical/syntactic", col: 1, row: 1, to: [select] }
+  - { id: select, label: "mRMR + RFE", sub: "select 15", col: 2, row: 1, to: [scale] }
+  - { id: scale, label: "StandardScaler", sub: "grid search cv", col: 3, row: 1, to: [rf] }
+  - { id: rf, label: "Random Forest", sub: "200 trees", col: 4, row: 1, to: [pred] }
+  - { id: pred, label: "Human / AI", sub: "97.40% acc", col: 5, row: 1, to: [] }
+---
+
+## The problem
+
+Large language models can now produce human-like text at scale, which threatens academic
+integrity and information trust. Detection approaches fall into three camps: zero-shot
+methods that probe a model's token probabilities, neural classifiers fine-tuned on labeled
+data, and **feature-based methods** that extract interpretable stylometric signals. Neural
+methods are accurate but opaque and GPU-hungry. I took the feature-based route deliberately,
+to get transparency, CPU-only efficiency, and insight into *how* machine writing differs from
+human writing.
+
+## 28 features across four categories
+
+The hypothesis is that AI text has measurable statistical fingerprints: more uniform
+sentences, narrower vocabulary, more predictable distributions. I engineered 28 features to
+capture them:
+
+- **Lexical (8):** average word and sentence length, type-token ratio, hapax and dislegomena
+  ratios, Yule's K, Simpson's diversity index, function-word ratio.
+- **Syntactic (7):** punctuation per sentence, comma / question / exclamation / semicolon
+  ratios, conjunction and pronoun ratios.
+- **Readability (5):** Flesch Reading Ease, Flesch-Kincaid Grade, Gunning Fog, Coleman-Liau,
+  and Automated Readability Index.
+- **Distributional (8):** stopword / digit / uppercase / whitespace ratios, average paragraph
+  length, sentence and word length standard deviation, and Zipf's coefficient.
+
+Two complementary feature-selection methods, **mRMR** (a filter maximizing mutual information
+while minimizing redundancy) and **RFE** (a linear-SVM wrapper), each independently selected
+15 features. Their agreement on whitespace ratio, vocabulary richness, automated readability,
+and Zipf's coefficient is a strong signal that those features genuinely matter.
+
+## In-domain results
+
+On the HC3 (Human ChatGPT Comparison Corpus) test set, all four classifiers cleared 95%, but
+**Random Forest led decisively at 97.40% accuracy and 0.9700 macro F1**:
+
+| Classifier | Accuracy | Macro F1 |
+| --- | --- | --- |
+| Random Forest | 97.40% | 0.9700 |
+| Decision Tree | 95.84% | 0.9525 |
+| AdaBoost | 95.69% | 0.9504 |
+| SVM | 95.34% | 0.9471 |
+
+Random Forest wins because it models non-linear feature interactions via bootstrap
+aggregation of 200 trees, capturing the complex geometry visible in the PCA and t-SNE
+projections that a single linear boundary cannot.
+
+## The honest finding: detection does not generalize
+
+The scientifically important result is a failure. When I took the HC3-trained models (trained
+only on ChatGPT text) and evaluated them on **M4/SemEval-2024**, generalization collapsed. On
+Bloomz-generated text, every classifier fell to **20-30% accuracy, worse than chance**, with
+models predominantly labeling Bloomz text as human. On a multi-generator subset, accuracy
+recovered to 76-80% but only because the subset was ChatGPT-heavy and class-imbalanced.
+
+The lesson is that statistical features capture **generator-specific** patterns, not a
+universal human-versus-machine boundary. Each LLM has its own training data, architecture,
+and decoding strategy, and therefore its own statistical profile. This aligns with
+theoretical work on the limits of AI-text detection, and it is exactly the kind of negative
+result that a pitch deck would hide and a research report should headline.
+
+## Why this design
+
+Unlike transformer-based detectors that need GPU inference, this feature-based pipeline runs
+efficiently on CPU, which makes it practical for resource-constrained deployment. The
+[playground](/playground/text-detection) lets you explore the feature importances, the HC3
+benchmark, and the cross-generator gap interactively.

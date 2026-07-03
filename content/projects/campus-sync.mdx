@@ -1,0 +1,71 @@
+---
+title: CampusSync
+slug: campus-sync
+category: fullstack
+tagline: A university collaboration platform with routine syncing, free-time matching, notifications, and a course scraper, delivered as an installable PWA.
+summary: A PHP and MySQL campus platform that ingests BRAC University course data through a Node scraper, matches students' free time across routines, and ships as an offline-capable PWA with a notification system.
+period: 2025
+featured: 7
+status: shipped
+cover: /assets/projects/campus-sync/landing.webp
+stack:
+  - PHP
+  - MySQL
+  - JavaScript
+  - Node.js
+  - PWA
+  - Puppeteer
+links:
+  github: https://github.com/ImtiazHossain-Eshan/Campus_Sync
+metrics:
+  - label: routine sync
+    value: free-time
+    detail: cross-student matching
+  - label: data
+    value: scraper
+    detail: automated course ingest
+  - label: delivery
+    value: PWA
+    detail: installable + offline
+  - label: notifications
+    value: real-time
+    detail: read/unread tracking
+gallery:
+  - src: /assets/projects/campus-sync/app.webp
+    caption: The CampusSync routine and collaboration interface
+architecture:
+  - { id: scraper, label: "Node Scraper", sub: "course data", col: 0, row: 0, to: [db] }
+  - { id: browser, label: "PWA Client", sub: "installable", col: 0, row: 2, to: [php] }
+  - { id: php, label: "PHP Backend", sub: "auth + routes", col: 1, row: 1, to: [db] }
+  - { id: db, label: "MySQL", sub: "routines + users", col: 2, row: 1, to: [notif] }
+  - { id: notif, label: "Notifications", sub: "free-time match", col: 3, row: 1, to: [] }
+---
+
+## The idea
+
+Coordinating anything across a university cohort means reconciling everyone's class routines,
+and that reconciliation is exactly the tedious manual work software should absorb. CampusSync
+is a collaboration platform that syncs student routines, finds overlapping free time, and
+keeps everyone notified, built on a PHP and MySQL stack with a Node data pipeline.
+
+## Automated course ingestion
+
+Rather than asking students to hand-enter their schedules, CampusSync includes a **Node-based
+scraper** that pulls BRAC University course and section data automatically. This is the
+difference between a form nobody fills in and a tool that already knows the course catalog:
+the scraper feeds a normalized MySQL schema of courses, sections, and timing details that the
+routine builder draws from.
+
+## Free-time matching and notifications
+
+Once routines are in the system, the platform computes **overlapping free time** across
+students, which powers study-group scheduling and the notification layer. Notifications track
+read and unread state per user, with endpoints for fetching, marking individual items, and
+marking all read, so the feed stays meaningful instead of becoming noise.
+
+## Shipped as a PWA
+
+CampusSync is delivered as an installable **Progressive Web App**, with a manifest, service
+worker, offline fallback page, and app icons. On a phone it behaves like a native app and
+stays useful without a connection, which is the right posture for something students check
+between classes.

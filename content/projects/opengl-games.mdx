@@ -1,0 +1,79 @@
+---
+title: OpenGL Games Trilogy
+slug: opengl-games
+category: games
+tagline: Three games built on raw OpenGL primitives for CSE423, where every raindrop, diamond, and laser bolt is drawn from points and lines by hand.
+summary: A trilogy of OpenGL games (House in Rainfall, Catch the Diamonds, Star Wars) built with PyOpenGL and GLUT using only primitive rendering, custom line algorithms, and hand-rolled game loops.
+period: 2026
+featured: 13
+status: coursework
+cover: /assets/projects/games/star-wars.webp
+stack:
+  - Python
+  - PyOpenGL
+  - GLUT
+  - Midpoint Line Algorithm
+  - AABB Collision
+links: {}
+metrics:
+  - label: games
+    value: "3"
+    detail: one per lab assignment
+  - label: rendering
+    value: primitives
+    detail: GL_POINTS / GL_LINES
+  - label: line drawing
+    value: midpoint
+    detail: 8-zone algorithm
+  - label: engine
+    value: none
+    detail: raw game loops
+gallery:
+  - src: /assets/projects/games/house-rainfall.webp
+    caption: "House in Rainfall: environment lighting transitions"
+  - src: /assets/projects/games/house-rainfall-windy.webp
+    caption: "Wind physics bending the rain direction"
+  - src: /assets/projects/games/catch-diamonds.webp
+    caption: "Catch the Diamonds: falling-object gameplay"
+  - src: /assets/projects/games/catch-diamonds-alt.webp
+    caption: "Score tracking and increasing difficulty"
+  - src: /assets/projects/games/star-wars-gameplay.webp
+    caption: "Star Wars: shooter gameplay with primitive-drawn ships"
+---
+
+## The constraint is the point
+
+CSE423 (Computer Graphics) bans the shortcuts: no sprites, no textures, no engine. Everything
+on screen must be constructed from **OpenGL primitives**, points and lines placed by
+algorithms you wrote yourself. Under that constraint, even a raindrop becomes an exercise in
+computational geometry. These three games were built with PyOpenGL and GLUT.
+
+## House in Rainfall
+
+An environment simulation: a house in a rainstorm where rainfall direction responds to
+**wind controls** (arrow keys bend the rain progressively left or right) and the scene
+transitions smoothly between day and night. Hundreds of raindrops are line segments whose
+positions update each frame, respawning at the top with randomized offsets, and the
+day-night cycle interpolates the palette continuously rather than snapping.
+
+## Catch the Diamonds
+
+A falling-object arcade game: diamonds spawn at random positions and fall at increasing
+speed; the player slides a catcher bar with the keyboard. The interesting parts are drawn and
+detected by hand: the diamond is composed with the **midpoint line algorithm** across all
+eight zones (the classic incremental technique that generalizes line drawing to any slope),
+and catching uses **AABB collision** between the diamond and the catcher. Miss once and the
+game ends, with score persistence across the session, plus pause/restart/exit buttons drawn
+from primitives too.
+
+## Star Wars
+
+A shooter where the player ship fires at descending enemies, with movement, projectile
+pooling, hit detection, lives, and score, all running in a hand-rolled GLUT game loop with
+keyboard state tracking for smooth simultaneous move-and-shoot input.
+
+## What carried over
+
+Writing the render loop, input handling, spawning, and collision from scratch (the parts an
+engine normally hides) is exactly what made later graphics work legible to me. When you have
+implemented the midpoint algorithm yourself, a rasterizer stops being magic.
