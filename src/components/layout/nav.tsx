@@ -37,6 +37,7 @@ export function Nav() {
   }, [open]);
 
   return (
+    <>
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500",
@@ -112,33 +113,49 @@ export function Nav() {
           </span>
         </button>
       </div>
+    </header>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay: rendered OUTSIDE the header, whose backdrop-filter
+          would otherwise become the containing block and collapse this
+          fixed sheet. Fully opaque so nothing bleeds through. */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={reduced ? { opacity: 1 } : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 top-16 z-40 flex flex-col bg-bg/95 backdrop-blur-lg md:hidden"
+            transition={{ duration: 0.28 }}
+            className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-bg md:hidden"
           >
-            <nav className="wrap flex flex-1 flex-col justify-center gap-2" aria-label="Mobile">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={reduced ? undefined : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * i, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <Link
-                    href={link.href}
-                    className="font-display block py-2 text-4xl text-ink/90 transition-colors hover:text-accent"
+            <nav className="wrap flex flex-1 flex-col justify-center gap-1 py-10" aria-label="Mobile">
+              {navLinks.map((link, i) => {
+                const active = pathname === link.href || pathname.startsWith(link.href + "/");
+                return (
+                  <motion.div
+                    key={link.href}
+                    initial={reduced ? undefined : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.04 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={link.href}
+                      className="group flex items-baseline gap-4 border-b border-line/60 py-3"
+                    >
+                      <span className="font-mono text-[11px] text-faint">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-display text-4xl transition-colors",
+                          active ? "text-accent" : "text-ink/90 group-hover:text-accent",
+                        )}
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
               <motion.button
                 type="button"
                 onClick={() => {
@@ -147,18 +164,22 @@ export function Nav() {
                 }}
                 initial={reduced ? undefined : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * navLinks.length, duration: 0.45 }}
-                className="mt-6 w-fit rounded-full border border-accent/40 px-5 py-2.5 text-accent"
+                transition={{ delay: 0.04 * navLinks.length, duration: 0.4 }}
+                className="mt-8 flex w-fit items-center gap-2.5 rounded-full border border-accent/40 bg-accent/10 px-5 py-3 text-[15px] text-accent"
               >
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
                 Ask AI about my work
               </motion.button>
             </nav>
-            <div className="wrap pb-10">
+            <div className="wrap flex items-center justify-between border-t border-line py-6">
               <p className="label-mono">{site.location}</p>
+              <a href={`mailto:${site.email}`} className="label-mono text-accent/80">
+                {site.email}
+              </a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

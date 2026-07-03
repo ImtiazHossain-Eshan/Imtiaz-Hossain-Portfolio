@@ -193,43 +193,66 @@ export function AssistantWidget() {
             <motion.div
               role="dialog"
               aria-label="AI assistant"
-              className="fixed inset-x-3 bottom-3 z-[72] flex max-h-[80vh] flex-col overflow-hidden rounded-2xl border border-line-bright bg-surface shadow-2xl shadow-black/60 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[26rem]"
+              className="fixed inset-x-3 bottom-3 top-3 z-[72] flex flex-col overflow-hidden rounded-3xl border border-line-bright bg-surface/95 shadow-2xl shadow-black/70 backdrop-blur-xl sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-6 sm:h-[min(37rem,80vh)] sm:w-[27rem]"
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-line px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-ink">Ask about Imtiaz</p>
-                  <p className="label-mono">grounded in his work / cites sources</p>
+              <div className="relative flex items-center justify-between px-5 py-4">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"
+                />
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-accent/25 bg-accent/10 text-accent">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M12 3a9 9 0 0 0-9 9c0 1.5.4 2.9 1 4.1L3 21l4.9-1c1.2.6 2.6 1 4.1 1a9 9 0 0 0 0-18Z" stroke="currentColor" strokeWidth="1.4" />
+                      <circle cx="8.5" cy="12" r="1" fill="currentColor" />
+                      <circle cx="12" cy="12" r="1" fill="currentColor" />
+                      <circle cx="15.5" cy="12" r="1" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-medium tracking-tight text-ink">Ask about Imtiaz</p>
+                    <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
+                      <span className="h-1 w-1 rounded-full bg-good" aria-hidden />
+                      grounded / cites sources
+                    </p>
+                  </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Close"
-                  className="text-faint transition-colors hover:text-ink"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-faint transition-colors hover:border-line-bright hover:text-ink"
                 >
-                  esc
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+                    <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
                 </button>
               </div>
 
-              {/* Body */}
-              <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+              {/* Body. data-lenis-prevent opts this container out of the global
+                  smooth-scroll so the mouse wheel scrolls the chat natively. */}
+              <div
+                ref={scrollRef}
+                data-lenis-prevent
+                className="flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 py-5"
+              >
                 {enabled === false && (
-                  <div className="rounded-lg border border-warn/30 bg-warn/5 p-3 text-[13px] text-warn">
-                    The live assistant is not configured on this deployment. You can still explore
-                    the suggested questions, and every answer they point to lives in the projects,
-                    research, and blog sections.
+                  <div className="rounded-xl border border-warn/25 bg-warn/[0.06] p-3.5 text-[12.5px] leading-relaxed text-warn/90">
+                    The live assistant is not configured on this deployment. The suggested questions
+                    still point to everything in the projects, research, and blog sections.
                   </div>
                 )}
 
                 {messages.length === 0 && (
                   <div>
                     <p className="text-[13.5px] leading-relaxed text-dim">
-                      I can answer questions about Imtiaz&apos;s projects, research, and experience,
-                      using only what he has documented. Try one:
+                      Ask me anything about Imtiaz&apos;s work. I only answer from what he has
+                      documented, and I cite my sources.
                     </p>
                     <div className="mt-4 flex flex-col gap-2">
                       {SUGGESTIONS.map((s) => (
@@ -238,8 +261,11 @@ export function AssistantWidget() {
                           type="button"
                           onClick={() => send(s)}
                           disabled={enabled === false}
-                          className="rounded-lg border border-line px-3 py-2 text-left text-[13px] text-dim transition-colors hover:border-accent/50 hover:text-ink disabled:opacity-40"
+                          className="group flex items-center gap-2.5 rounded-xl border border-line bg-raised/40 px-3.5 py-2.5 text-left text-[13px] text-dim transition-colors hover:border-accent/40 hover:bg-raised hover:text-ink disabled:opacity-40"
                         >
+                          <span className="text-accent/60 transition-colors group-hover:text-accent" aria-hidden>
+                            &rsaquo;
+                          </span>
                           {s}
                         </button>
                       ))}
@@ -248,28 +274,38 @@ export function AssistantWidget() {
                 )}
 
                 {messages.map((m, i) => (
-                  <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
+                  <div key={i} className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}>
+                    {m.role === "assistant" && (
+                      <span className="mb-1.5 ml-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                        <span className="h-1 w-1 rounded-full bg-accent" aria-hidden />
+                        assistant
+                      </span>
+                    )}
                     <div
                       className={cn(
-                        "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed",
+                        "max-w-[88%] text-[13.5px] leading-relaxed",
                         m.role === "user"
-                          ? "bg-accent/15 text-ink"
-                          : "border border-line bg-raised text-dim",
+                          ? "rounded-2xl rounded-br-md bg-accent/15 px-3.5 py-2.5 text-ink"
+                          : "w-full rounded-2xl rounded-tl-md border border-line/80 bg-gradient-to-b from-raised to-surface px-4 py-3 text-ink/90",
                       )}
                     >
                       {m.role === "assistant" ? (
                         <div className="assistant-md">
                           <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
                           {m.citations && m.citations.length > 0 && m.content && (
-                            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-line pt-2.5">
+                            <div className="mt-3.5 flex flex-wrap gap-1.5 border-t border-line pt-3">
+                              <span className="w-full pb-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-faint">
+                                sources
+                              </span>
                               {m.citations.map((c) => (
                                 <Link
                                   key={c.n}
                                   href={c.url}
                                   onClick={() => setOpen(false)}
-                                  className="rounded-full border border-line-bright px-2 py-0.5 font-mono text-[10px] text-faint transition-colors hover:border-accent hover:text-accent"
+                                  className="flex items-center gap-1 rounded-full border border-line-bright bg-bg/40 px-2.5 py-1 font-mono text-[10px] text-dim transition-colors hover:border-accent hover:text-accent"
                                 >
-                                  [{c.n}] {c.title}
+                                  <span className="text-accent/70">{c.n}</span>
+                                  {c.title}
                                 </Link>
                               ))}
                             </div>

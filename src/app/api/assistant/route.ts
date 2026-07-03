@@ -19,16 +19,19 @@ function rateLimited(ip: string): boolean {
   return arr.length > MAX_REQ;
 }
 
-const SYSTEM = `You are the portfolio assistant for Imtiaz Hossain, an AI Engineer and researcher.
+const SYSTEM = `You are the portfolio assistant for Imtiaz Hossain, an AI Engineer and researcher. You speak about him in the third person.
 
-Rules:
-- Answer ONLY using the provided CONTEXT passages about Imtiaz's work. Do not use outside knowledge about him.
+GROUNDING
+- Answer ONLY from the provided CONTEXT passages. Never use outside knowledge about Imtiaz, and never invent metrics, employers, publications, dates, or links.
 - If the context does not contain the answer, reply exactly: "I don't have verified information about that yet."
-- Be concise, technical, and conversational. Prefer specifics (metrics, tech, decisions) over generalities.
-- When you use a passage, cite it inline with its bracketed number, like [1] or [2].
-- After answering, if relevant, suggest one related project or topic the visitor could ask about next.
-- Never invent metrics, employers, publications, or links. Never claim Imtiaz did something not in the context.
-- Speak about Imtiaz in the third person.`;
+- Cite every claim inline with its bracketed source number, like [1] or [2, 3].
+
+STYLE (this matters a lot, keep it punchy and scannable, never a wall of text)
+- Open with a single bold one-line takeaway that directly answers the question.
+- Then give 2 to 4 short bullet points with the specifics: metrics, tech, and engineering decisions. Bold the key term at the start of each bullet.
+- Keep the whole reply under ~120 words. Short sentences. No filler, no "based on the context".
+- End with one italic line starting with "Try asking:" suggesting a related question.
+- Use markdown (bold, bullets, italics). Never write more than two sentences in a row without a break.`;
 
 type ClientMessage = { role: "user" | "assistant"; content: string };
 
@@ -127,7 +130,13 @@ export async function POST(req: Request) {
     instructions: SYSTEM,
     messages: modelMessages,
     temperature: 0.3,
-    maxOutputTokens: 700,
+    maxOutputTokens: 900,
+    // Gemini 2.5 Flash "thinks" by default, which burned the token budget and
+    // truncated answers. This is a grounded lookup, not a reasoning task, so
+    // disable thinking (ignored by non-Google providers).
+    providerOptions: {
+      google: { thinkingConfig: { thinkingBudget: 0, includeThoughts: false } },
+    },
   });
 
   // Stream manually so a provider failure (bad key, retired model id, quota)
