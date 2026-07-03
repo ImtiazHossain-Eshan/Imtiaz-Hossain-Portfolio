@@ -6,6 +6,7 @@ import { projects } from "#velite";
 import { MDXContent } from "@/components/mdx/mdx-content";
 import { ArchitectureDiagram } from "@/components/projects/architecture-diagram";
 import { ProjectGallery } from "@/components/projects/project-gallery";
+import { YouTubeEmbed } from "@/components/projects/youtube-embed";
 import { TocRail } from "@/components/ui/toc-rail";
 import { Reveal } from "@/components/motion/reveal";
 import { fig } from "@/lib/utils";
@@ -167,6 +168,16 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
           <MDXContent code={project.content} />
         </div>
       </div>
+
+      {/* Walkthrough video (facade-embedded) */}
+      {project.video && (
+        <section className="wrap mt-20" aria-label="Walkthrough">
+          <div className="mx-auto max-w-4xl">
+            <p className="label-mono mb-6">walkthrough / watch it in action</p>
+            <YouTubeEmbed id={project.video.id} title={project.video.title} />
+          </div>
+        </section>
+      )}
 
       {/* Stack */}
       <section className="wrap mt-20" aria-label="Technology stack">

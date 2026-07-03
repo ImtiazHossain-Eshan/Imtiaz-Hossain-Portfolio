@@ -28,6 +28,8 @@ const projects = defineCollection({
       featured: s.number().default(99),
       status: s.enum(["live", "shipped", "research", "coursework"]).default("shipped"),
       cover: s.string().optional(),
+      /** Optional YouTube walkthrough (facade-embedded for fast loads). */
+      video: s.object({ id: s.string(), title: s.string() }).optional(),
       gallery: gallery.default([]),
       stack: s.array(s.string()).default([]),
       links: s
