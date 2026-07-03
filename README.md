@@ -3,10 +3,11 @@
 AI Engineer and researcher working across computer vision, NLP, deep learning, and the
 production systems around them. BRAC University, Dhaka.
 
-This is the source for my portfolio, **[imtiazhossain.dev](https://imtiazhossain.dev)**. It is
-less a résumé and more a working laboratory you can walk through. Every number on the site is
-pulled from a real result file, and where a model has an honest ceiling, I say so rather than
-dressing it up.
+### Live at [imtiazhossain.dev](https://imtiazhossain.dev)
+
+This is the source for my portfolio. It is less a résumé and more a working laboratory you can
+walk through. Every number on the site is pulled from a real result file, and where a model has
+an honest ceiling, I say so rather than dressing it up.
 
 ## What you can do there
 
@@ -16,8 +17,9 @@ dressing it up.
 - **Read the work.** Case studies on medical-imaging deep learning, a privacy framework for
   faces under generative editing, production platforms that run on a zero-cost cloud budget, and
   lower-level systems work like a UNIX shell and a file-system checker written in C.
-- **Ask about me.** A retrieval assistant grounded in everything on the site. Ask it about any
-  project and it answers conversationally, with citations, and admits when it does not know.
+- **Ask about me.** A retrieval-augmented assistant, grounded only in what is on the site. Ask
+  it about any project (press the chat button or Cmd-K) and it answers with citations, and
+  clearly admits when it does not know.
 
 ## A bit about me
 
@@ -34,6 +36,12 @@ Open to research collaborations, AI and ML engineering roles, and graduate oppor
 - LinkedIn: [imtiazhossaineshan](https://www.linkedin.com/in/imtiazhossaineshan/)
 - Google Scholar: [profile](https://scholar.google.com/citations?user=CIjeZSsAAAAJ&hl=en)
 
+## Built with
+
+Next.js and React, TypeScript, Tailwind CSS, Three.js for the neural-field hero, Framer Motion,
+MDX for the writing, and the Vercel AI SDK for the assistant (provider-switchable across Gemini,
+Groq, and OpenRouter). Deployed on Vercel.
+
 ## Running it locally
 
 ```bash
@@ -43,6 +51,4 @@ npm run dev        # http://localhost:3000
 
 It runs fully with no API keys. Optional keys (a free Gemini or Groq key for the assistant, a
 GitHub token for live repo data) unlock extras and degrade gracefully when absent. See
-`.env.example` for the full list, and `DEPLOY.md` if you want the deployment checklist.
-
-Built with Next.js, React, TypeScript, Tailwind CSS, Three.js, and the Vercel AI SDK.
+`.env.example` for the full list, and `DEPLOY.md` for the deployment checklist.
