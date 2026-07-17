@@ -5,6 +5,30 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+const horizontalOverflowValues = new Set(["auto", "scroll", "overlay"]);
+
+// Horizontal overflow wrappers become nested scroll containers in browsers.
+// Let native wheel handling run there so vertical page scroll does not stall.
+function isHorizontalScrollSurface(node: EventTarget): node is HTMLElement {
+  if (!(node instanceof HTMLElement)) return false;
+  if (node === document.body || node === document.documentElement) return false;
+  return horizontalOverflowValues.has(window.getComputedStyle(node).overflowX);
+}
+
+function shouldUseNativeNestedScroll({
+  deltaX,
+  deltaY,
+  event,
+}: {
+  deltaX: number;
+  deltaY: number;
+  event: WheelEvent | TouchEvent;
+}) {
+  if (!(event instanceof WheelEvent)) return false;
+  if (deltaX === 0 && deltaY === 0) return false;
+  return event.composedPath().some(isHorizontalScrollSurface);
+}
+
 /**
  * Keeps GSAP ScrollTrigger locked to Lenis's smoothed scroll position. Lives
  * inside the ReactLenis provider so `useLenis` can subscribe to scroll ticks.
@@ -56,7 +80,12 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   return (
     <ReactLenis
       root
-      options={{ lerp: 0.12, wheelMultiplier: 0.9, autoRaf: false }}
+      options={{
+        lerp: 0.12,
+        wheelMultiplier: 0.9,
+        autoRaf: false,
+        virtualScroll: (data) => !shouldUseNativeNestedScroll(data),
+      }}
       ref={lenisRef}
     >
       <ScrollTriggerBridge />
