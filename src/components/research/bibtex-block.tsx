@@ -23,7 +23,7 @@ export function BibtexBlock({ bibtex, slug }: { bibtex: string; slug: string }) 
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-[#0a0c10]">
+    <div className="overflow-hidden rounded-xl border border-line bg-code">
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
         <span className="label-mono">bibtex</span>
         <div className="flex gap-2">

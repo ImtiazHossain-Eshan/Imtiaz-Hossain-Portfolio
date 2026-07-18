@@ -55,14 +55,7 @@ export function NeuralField({ className }: { className?: string }) {
   return (
     <div ref={wrapRef} className={className} aria-hidden>
       {/* Ambient fallback: always painted, canvas fades in over it. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 62% 42%, rgba(124,223,255,0.075), transparent 65%)," +
-            "radial-gradient(ellipse 45% 40% at 30% 62%, rgba(124,223,255,0.05), transparent 70%)",
-        }}
-      />
+      <div className="hero-neural-fallback absolute inset-0" />
       {mode === "on" && (
         <NeuralFieldCanvas
           quality={quality}

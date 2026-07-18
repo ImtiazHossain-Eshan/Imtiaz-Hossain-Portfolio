@@ -29,14 +29,7 @@ export function Hero() {
 
       {/* Readability scrims: strong on the left where the copy lives,
           light elsewhere so the field still breathes. */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(100deg, rgba(7,8,10,0.92) 0%, rgba(7,8,10,0.62) 34%, rgba(7,8,10,0.12) 62%, rgba(7,8,10,0) 78%)," +
-            "linear-gradient(to bottom, rgba(7,8,10,0.6) 0%, rgba(7,8,10,0) 22%, rgba(7,8,10,0) 55%, rgba(7,8,10,0.94) 100%)",
-        }}
-      />
+      <div className="hero-home-scrim pointer-events-none absolute inset-0" />
 
       <div className="wrap relative z-10 flex flex-1 flex-col justify-center pb-16 pt-32">
         <p

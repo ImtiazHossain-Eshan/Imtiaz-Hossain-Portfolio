@@ -140,7 +140,7 @@ export function ProjectIndex({ projects }: { projects: ProjectRow[] }) {
       {!reduced && (
         <motion.div
           aria-hidden
-          className="pointer-events-none fixed left-0 top-0 z-40 hidden w-[22rem] overflow-hidden rounded-xl border border-line-bright shadow-2xl shadow-black/60 md:block"
+          className="pointer-events-none fixed left-0 top-0 z-40 hidden w-[22rem] overflow-hidden rounded-xl border border-line-bright shadow-2xl shadow-shadow/40 md:block"
           style={{ x: sx, y: sy }}
           animate={{ opacity: hovered?.cover ? 1 : 0, scale: hovered?.cover ? 1 : 0.94 }}
           transition={{ duration: 0.25, ease: "easeOut" }}

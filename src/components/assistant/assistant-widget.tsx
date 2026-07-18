@@ -166,7 +166,7 @@ export function AssistantWidget() {
         onClick={() => setOpen(true)}
         aria-label="Ask the AI assistant"
         data-cursor-label="ask me anything"
-        className="fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full border border-accent/40 bg-bg/80 text-accent shadow-lg shadow-black/40 backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-accent hover:bg-accent/10"
+        className="fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full border border-accent/40 bg-bg/80 text-accent shadow-lg shadow-shadow/30 backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-accent hover:bg-accent/10"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
@@ -193,7 +193,7 @@ export function AssistantWidget() {
             <motion.div
               role="dialog"
               aria-label="AI assistant"
-              className="fixed inset-x-3 bottom-3 top-3 z-[72] flex flex-col overflow-hidden rounded-3xl border border-line-bright bg-surface/95 shadow-2xl shadow-black/70 backdrop-blur-xl sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-6 sm:h-[min(37rem,80vh)] sm:w-[27rem]"
+              className="fixed inset-x-3 bottom-3 top-3 z-[72] flex flex-col overflow-hidden rounded-3xl border border-line-bright bg-surface/95 shadow-2xl shadow-shadow/45 backdrop-blur-xl sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-6 sm:h-[min(37rem,80vh)] sm:w-[27rem]"
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}

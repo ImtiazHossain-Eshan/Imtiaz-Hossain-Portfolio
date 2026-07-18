@@ -30,13 +30,7 @@ export function PageHero({
       <div className="pointer-events-none absolute inset-0 -z-10">
         <ShaderHero variant={variant} fallback={fallback} className="absolute inset-0" />
         {/* Scrim: keep the copy legible while letting the aurora breathe. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(7,8,10,0.62) 0%, rgba(7,8,10,0.28) 42%, rgba(7,8,10,0.9) 100%)",
-          }}
-        />
+        <div className="hero-page-scrim absolute inset-0" />
       </div>
 
       <div className="wrap pb-14 pt-36 md:pb-20 md:pt-44">

@@ -49,9 +49,27 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07080a",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f7f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#07080a" },
+  ],
+  colorScheme: "light dark",
 };
+
+const themeScript = `
+(() => {
+  try {
+    const saved = localStorage.getItem("portfolio-theme");
+    const theme = saved === "light" || saved === "dark" ? saved : "light";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute("content", theme === "light" ? "#f6f7f8" : "#07080a");
+    });
+  } catch {
+    document.documentElement.dataset.theme = "light";
+  }
+})();`;
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -82,8 +100,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="light"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla's
           cz-shortcut-listen) inject attributes onto <body> after SSR. This
           suppresses only body's own attribute mismatch, not descendants. */}

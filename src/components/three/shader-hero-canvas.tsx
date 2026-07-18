@@ -169,7 +169,7 @@ export default function ShaderHeroCanvas({
 }) {
   return (
     <Canvas
-      className="transition-opacity duration-1000"
+      className="theme-visual-canvas transition-opacity duration-1000"
       dpr={[1, dprMax]}
       frameloop={inView ? "always" : "never"}
       gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}

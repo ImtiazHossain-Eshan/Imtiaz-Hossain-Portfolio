@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { navLinks, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 /** Fire the global event the assistant widget listens for. */
 function openAssistant() {
@@ -79,6 +80,7 @@ export function Nav() {
               </Link>
             );
           })}
+          <ThemeToggle className="ml-2" />
           <button
             type="button"
             onClick={openAssistant}
@@ -89,29 +91,32 @@ export function Nav() {
           </button>
         </nav>
 
-        {/* Mobile trigger */}
-        <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center md:hidden"
-          aria-expanded={open}
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="relative block h-3 w-5">
-            <span
-              className={cn(
-                "absolute left-0 top-0 h-px w-full bg-ink transition-transform duration-300",
-                open && "top-1/2 rotate-45",
-              )}
-            />
-            <span
-              className={cn(
-                "absolute bottom-0 left-0 h-px w-full bg-ink transition-transform duration-300",
-                open && "bottom-auto top-1/2 -rotate-45",
-              )}
-            />
-          </span>
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          {/* Mobile trigger */}
+          <button
+            type="button"
+            className="flex h-10 w-10 items-center justify-center"
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="relative block h-3 w-5">
+              <span
+                className={cn(
+                  "absolute left-0 top-0 h-px w-full bg-ink transition-transform duration-300",
+                  open && "top-1/2 rotate-45",
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute bottom-0 left-0 h-px w-full bg-ink transition-transform duration-300",
+                  open && "bottom-auto top-1/2 -rotate-45",
+                )}
+              />
+            </span>
+          </button>
+        </div>
       </div>
     </header>
 

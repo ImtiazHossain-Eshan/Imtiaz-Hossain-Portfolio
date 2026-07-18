@@ -20,7 +20,7 @@ export default function NeuralFieldCanvas({
 }) {
   return (
     <Canvas
-      className="transition-opacity duration-1000"
+      className="theme-visual-canvas transition-opacity duration-1000"
       camera={{ position: [0, 0, 10.5], fov: 55 }}
       dpr={[1, dprMax]}
       frameloop={inView ? "always" : "never"}
