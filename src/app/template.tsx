@@ -11,10 +11,13 @@ import type { ReactNode } from "react";
  */
 export default function Template({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion();
-  if (reduced) return <>{children}</>;
+  if (reduced) return <div>{children}</div>;
 
+  // A single root element: Next renders templates inside a keyed list, and a
+  // multi-child fragment here triggers its missing-key warning. The wrapper has
+  // no transform, so the fixed scanline still spans the viewport.
   return (
-    <>
+    <div>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -29,6 +32,6 @@ export default function Template({ children }: { children: ReactNode }) {
         animate={{ y: "100vh", opacity: 0 }}
         transition={{ duration: 0.9, ease: [0.5, 0, 0.2, 1] }}
       />
-    </>
+    </div>
   );
 }

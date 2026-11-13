@@ -26,6 +26,8 @@
 
 # misc
 .DS_Store
+Thumbs.db
+desktop.ini
 *.pem
 
 # debug
@@ -34,21 +36,29 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: keep only the empty template
 .env*
+!.env.example
 
 # vercel
 .vercel
 
-# agent / editor tooling (not part of the project)
-.claude/
-CLAUDE.md
-AGENTS.md
-.cursor/
-.cursorrules
-.aider*
-.codex/config.toml
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python
+__pycache__/
+*.py[cod]
+
+# editors
+.vscode/
+.idea/
+
+# local scratch and build output
+/tmp/
+/output/
+
+# private CV sources and PDFs (include CGPA, phone and photo).
+# The website's CGPA-free copy lives in public/resume/ and is committed.
+/cv/

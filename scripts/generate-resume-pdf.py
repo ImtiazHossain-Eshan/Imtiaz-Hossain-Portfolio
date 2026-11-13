@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import shutil
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_RIGHT
@@ -13,6 +14,7 @@ from reportlab.platypus import (
     Frame,
     HRFlowable,
     KeepTogether,
+    PageBreak,
     PageTemplate,
     Paragraph,
     Spacer,
@@ -24,6 +26,7 @@ from reportlab.platypus import (
 ROOT = Path(__file__).resolve().parents[1]
 RESUME_JSON = ROOT / "public" / "resume" / "imtiaz-hossain-resume.json"
 OUTPUT_PDF = ROOT / "public" / "resume" / "imtiaz-hossain-resume.pdf"
+FINAL_PDF = ROOT / "output" / "pdf" / "imtiaz-hossain-resume.pdf"
 
 
 def esc(text: str) -> str:
@@ -52,8 +55,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Contact",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=8.8,
-            leading=10.2,
+            fontSize=9.0,
+            leading=10.5,
             textColor=ink,
             spaceAfter=1,
         ),
@@ -61,8 +64,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Tagline",
             parent=base["Normal"],
             fontName="Times-Bold",
-            fontSize=9.7,
-            leading=11,
+            fontSize=10.0,
+            leading=11.5,
             textColor=ink,
             spaceAfter=0,
         ),
@@ -70,8 +73,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Section",
             parent=base["Normal"],
             fontName="Times-Bold",
-            fontSize=11.1,
-            leading=12.2,
+            fontSize=11.5,
+            leading=13.0,
             textColor=ink,
             spaceAfter=1.5,
         ),
@@ -79,8 +82,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Body",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=9.5,
-            leading=11.5,
+            fontSize=9.9,
+            leading=12.0,
             textColor=ink,
             spaceAfter=1,
         ),
@@ -88,8 +91,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "SkillGroup",
             parent=base["Normal"],
             fontName="Times-Bold",
-            fontSize=9.35,
-            leading=10.4,
+            fontSize=9.7,
+            leading=11.0,
             textColor=ink,
             spaceBefore=2.1,
             spaceAfter=0,
@@ -98,8 +101,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "SkillLine",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=8.85,
-            leading=10.2,
+            fontSize=9.2,
+            leading=10.8,
             leftIndent=7,
             firstLineIndent=-4,
             textColor=ink,
@@ -109,8 +112,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Entry",
             parent=base["Normal"],
             fontName="Times-Bold",
-            fontSize=9.65,
-            leading=10.9,
+            fontSize=10.0,
+            leading=11.5,
             textColor=ink,
             spaceAfter=0,
         ),
@@ -118,8 +121,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Date",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=8.9,
-            leading=10.9,
+            fontSize=9.2,
+            leading=11.5,
             alignment=TA_RIGHT,
             textColor=muted,
             spaceAfter=0,
@@ -128,8 +131,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Org",
             parent=base["Normal"],
             fontName="Times-Italic",
-            fontSize=9.05,
-            leading=10.2,
+            fontSize=9.3,
+            leading=10.8,
             textColor=ink,
             spaceAfter=0.6,
         ),
@@ -137,26 +140,26 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "Bullet",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=9.15,
-            leading=10.85,
+            fontSize=9.5,
+            leading=11.5,
             leftIndent=11,
             firstLineIndent=-7,
             textColor=ink,
-            spaceAfter=0.9,
+            spaceAfter=1.2,
         ),
         "small": ParagraphStyle(
             "Small",
             parent=base["Normal"],
             fontName="Times-Roman",
-            fontSize=8.9,
-            leading=10.4,
+            fontSize=9.3,
+            leading=11.0,
             textColor=ink,
             spaceAfter=1,
         ),
     }
 
 
-def section(story: list, title: str, styles: dict[str, ParagraphStyle], *, top: float = 4.5) -> None:
+def section(story: list, title: str, styles: dict[str, ParagraphStyle], *, top: float = 5.5) -> None:
     story.append(Spacer(1, top))
     story.append(Paragraph(esc(title), styles["section"]))
     story.append(
@@ -164,7 +167,7 @@ def section(story: list, title: str, styles: dict[str, ParagraphStyle], *, top: 
             width="100%",
             thickness=0.45,
             color=colors.HexColor("#333333"),
-            spaceAfter=2.4,
+            spaceAfter=3.0,
         )
     )
 
@@ -223,7 +226,7 @@ def draw_page_number(canvas, doc) -> None:
     canvas.saveState()
     canvas.setFont("Times-Roman", 8)
     canvas.setFillColor(colors.HexColor("#4F4F4F"))
-    canvas.drawRightString(A4[0] - 1.2 * cm, 0.62 * cm, f"{doc.page}/2")
+    canvas.drawRightString(A4[0] - 1.2 * cm, 0.62 * cm, f"Imtiaz Hossain  |  {doc.page}/2")
     canvas.restoreState()
 
 
@@ -232,10 +235,10 @@ def build_pdf() -> None:
     styles = make_styles()
     story: list = []
 
-    left_margin = 1.2 * cm
-    right_margin = 1.2 * cm
-    top_margin = 0.88 * cm
-    bottom_margin = 0.92 * cm
+    left_margin = 1.4 * cm
+    right_margin = 1.4 * cm
+    top_margin = 1.0 * cm
+    bottom_margin = 1.0 * cm
     page_width = A4[0] - left_margin - right_margin
     frame = Frame(
         left_margin,
@@ -272,41 +275,6 @@ def build_pdf() -> None:
 
     section(story, "Summary", styles, top=4)
     story.append(Paragraph(esc(basics["summary"]), styles["body"]))
-
-    section(story, "Technical Skills", styles)
-    for skill in data["skills"]:
-        story.append(Paragraph(esc(skill["name"]), styles["skill_group"]))
-        for line in skill["keywords"]:
-            story.append(Paragraph(f"- {esc(line)}", styles["skill_line"]))
-
-    research_work = [item for item in data["work"] if item["section"] == "Research Experience"]
-    section(story, "Research Experience", styles)
-    add_work_entries(story, research_work, styles, page_width)
-
-    engineering_work = [
-        item for item in data["work"] if item["section"] == "Selected Engineering Projects"
-    ]
-    section(story, "Selected Engineering Projects", styles, top=0)
-    add_work_entries(story, engineering_work, styles, page_width)
-
-    section(story, "Additional Projects", styles)
-    for project in data["projects"]:
-        story.append(
-            Paragraph(
-                f'<b>{esc(project["name"])}:</b> {esc(project["description"])}',
-                styles["small"],
-            )
-        )
-
-    section(story, "Research Output", styles)
-    for item in data["publications"]:
-        story.append(
-            Paragraph(
-                f'<b>{esc(item["name"])}.</b> {esc(item["publisher"])}, '
-                f'{esc(item["releaseDate"])}. {esc(item["summary"])}',
-                styles["small"],
-            )
-        )
 
     section(story, "Education", styles)
     education = data["education"][0]
@@ -351,6 +319,46 @@ def build_pdf() -> None:
         )
     )
 
+    section(story, "Technical Skills", styles)
+    for skill in data["skills"]:
+        story.append(Paragraph(esc(skill["name"]), styles["skill_group"]))
+        for line in skill["keywords"]:
+            story.append(Paragraph(f"- {esc(line)}", styles["skill_line"]))
+
+    research_work = [item for item in data["work"] if item["section"] == "Research Experience"]
+    section(story, "Research Experience", styles)
+    add_work_entries(story, research_work, styles, page_width)
+
+    engineering_work = [
+        item for item in data["work"] if item["section"] == "Selected Engineering Projects"
+    ]
+    section(story, "Selected Engineering Projects", styles, top=0)
+    add_work_entries(story, engineering_work[:1], styles, page_width)
+    story.append(PageBreak())
+    section(story, "Selected Engineering Projects (continued)", styles, top=0)
+    add_work_entries(story, engineering_work[1:], styles, page_width)
+
+    section(story, "Additional Projects", styles)
+    for project in data["projects"]:
+        story.append(
+            Paragraph(
+                f'<b>{esc(project["name"])}:</b> {esc(project["description"])}',
+                styles["small"],
+            )
+        )
+
+    section(story, "Research Output", styles)
+    for item in data["publications"]:
+        story.append(
+            Paragraph(
+                f'<b>{esc(item["name"])}.</b> {esc(item["publisher"])}, '
+                f'{esc(item["releaseDate"])}. {esc(item["summary"])}',
+                styles["small"],
+            )
+        )
+
+
+
     section(story, "Teaching & Leadership", styles)
     for item in data["volunteer"]:
         period = period_for(item) or "Leadership experience"
@@ -385,9 +393,13 @@ def build_pdf() -> None:
         bottomMargin=bottom_margin,
         title="Resume - Imtiaz Hossain",
         author="Imtiaz Hossain",
+        subject="AI/ML engineering, computer vision, NLP, and research resume",
+        keywords="AI, machine learning, computer vision, NLP, PyTorch, Next.js",
     )
     doc.addPageTemplates(PageTemplate(id="resume", frames=[frame], onPage=draw_page_number))
     doc.build(story)
+    FINAL_PDF.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(OUTPUT_PDF, FINAL_PDF)
 
 
 if __name__ == "__main__":

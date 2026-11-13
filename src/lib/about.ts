@@ -38,7 +38,7 @@ export const domains: Domain[] = [
     body: "I build AI systems that are legible, not just accurate. Polaris uses structured-JSON LLM output and a transparent logistic-regression probability model with visible factor weights, and degrades gracefully to a heuristic engine with no API key.",
     evidence: [
       { label: "Polaris case study", href: "/projects/polaris" },
-      { label: "Live demo", href: "https://polaris-zcq9.vercel.app/" },
+      { label: "Live demo", href: "https://polaris-ai-academy.vercel.app/" },
     ],
     tools: ["Gemini", "RAG", "Structured output", "Groq Llama 3"],
   },

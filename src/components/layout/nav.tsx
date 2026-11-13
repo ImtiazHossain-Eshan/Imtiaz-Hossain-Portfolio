@@ -49,12 +49,8 @@ export function Nav() {
     >
       <div className="wrap-wide flex h-16 items-center justify-between gap-6">
         <Link href="/" className="group flex items-baseline gap-2.5" aria-label="Home">
-          <span className="text-[15px] font-medium tracking-tight text-ink">
-            Imtiaz Hossain
-          </span>
-          <span className="label-mono hidden text-accent/70 transition-colors group-hover:text-accent sm:inline">
-            ai.lab
-          </span>
+          <span className="text-[17px] font-semibold tracking-tight text-ink">Imtiaz Hossain</span>
+          <span className="label-mono hidden text-accent/70 transition-colors group-hover:text-accent sm:inline">ai.lab</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">

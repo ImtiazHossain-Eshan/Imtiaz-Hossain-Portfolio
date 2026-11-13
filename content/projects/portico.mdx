@@ -1,0 +1,109 @@
+---
+title: Portico
+slug: portico
+category: fullstack
+tagline: A real-estate portfolio intelligence app for Android, with gross-to-net financial modelling, multi-currency analysis, Bangla localisation, and sandbox payments.
+summary: A Kotlin and Jetpack Compose property tracker that turns raw records into computed ROI, yield, cap rate, and cashflow across currencies, with Clerk authentication, owner-scoped Firestore workspaces, an on-device analysis assistant, and dual sandbox payment routes, for the CSE 489 Mobile App Development course.
+period: 2026
+featured: 4
+status: shipped
+cover: /assets/projects/portico/banner.webp
+gallery:
+  - src: /assets/projects/portico/02-dashboard.png
+    caption: "Dashboard overview with computed portfolio valuation and gross-to-net metrics"
+  - src: /assets/projects/portico/03-waterfall.png
+    caption: "The gross-to-net waterfall breaking rental income through expenses and taxes down to net yield"
+  - src: /assets/projects/portico/04-portfolio.png
+    caption: "Portfolio register with multi-currency search, regional filtering, and computed yield sorting"
+  - src: /assets/projects/portico/05-property.png
+    caption: "Property detail with value scrub, return metrics, and acquisition history"
+  - src: /assets/projects/portico/07-allocation.png
+    caption: "Asset allocation report with cross-currency normalization"
+  - src: /assets/projects/portico/09-assistant-answer.png
+    caption: "Portico Intelligence on-device assistant with transparent arithmetic proof"
+  - src: /assets/projects/portico/11-tax-bangladesh.png
+    caption: "Bangladesh tax module with auditable formulas and editable rate assumptions"
+  - src: /assets/projects/portico/12-checkout.png
+    caption: "Dual-mode sandbox checkout supporting card test cases and SSLCommerz"
+  - src: /assets/projects/portico/13-bangla.png
+    caption: "Complete Bangla localization covering 770 strings across the interface"
+  - src: /assets/projects/portico/16-tablet-dashboard.png
+    caption: "Adaptive tablet and desktop layout with navigation rail and expanded metrics"
+stack:
+  - Kotlin
+  - Jetpack Compose
+  - Firebase
+  - Firestore
+  - Clerk
+  - Material 3
+  - SSLCommerz
+  - Gemma
+links:
+  github: https://github.com/ImtiazHossain-Eshan/Portico_Android
+metrics:
+  - label: tests
+    value: "116"
+    detail: passing across the suite
+  - label: finance engine
+    value: computed
+    detail: nothing stores a return
+  - label: languages
+    value: "2"
+    detail: English + Bangla (770 strings)
+  - label: payments
+    value: dual sandbox
+    detail: built-in + SSLCommerz
+architecture:
+  - { id: clerk, label: "Clerk Auth", sub: "email / OAuth", col: 0, row: 0, to: [app] }
+  - { id: app, label: "Compose UI", sub: "phone / tablet", col: 1, row: 1, to: [finance, firestore] }
+  - { id: finance, label: "Finance Engine", sub: "ROI, yield, cap rate", col: 2, row: 0, to: [reports] }
+  - { id: firestore, label: "Firestore", sub: "owner-scoped", col: 2, row: 2, to: [reports] }
+  - { id: reports, label: "Reports", sub: "5 analytic views", col: 3, row: 1, to: [assistant] }
+  - { id: assistant, label: "Intelligence", sub: "on-device + Gemma", col: 4, row: 1, to: [] }
+---
+
+## The product argument
+
+A property portfolio is not one number. It is gross rent falling through operating
+costs and tax to whatever actually survives. Portico makes that subtraction visible
+on every property and across the whole register, pairing owner-scoped records with a
+financial engine that **recomputes return, yield, cap rate, and cashflow from source
+transactions** rather than storing impressive-looking percentages.
+
+The gross-to-net waterfall is the product's core component, and it appears at four
+scales: dashboard summary, property detail, tax module, and gross-vs-net report. Each
+deduction shows a bar proportional to gross and its share as a percentage. Every figure
+is derived by `domain/Finance.kt`, so a newly added property is analysed by exactly the
+same rules as the seeded ones.
+
+## Multi-currency, by design
+
+A portfolio spanning Dhaka, Montevideo, and Buenos Aires holds three currencies.
+Conversion happens **once**, at the boundary of `Finance.analyse`, so everything
+downstream works in a single currency without knowing conversion exists. Rates are
+expressed as units per 1 USD and are user assumptions, not a feed: the same philosophy
+as the tax rates. Switching display currency moves every amount and leaves every ratio
+untouched; ROI, cap rate, and net yield come out identical in taka or dollars.
+
+## Portico Intelligence
+
+The analysis assistant answers portfolio questions **on-device by default**. Cloud
+analysis via Gemma is opt-in and sends only computed figures, never an address or a
+document. Every answer carries the arithmetic that produced it, so a figure can be
+checked rather than trusted.
+
+## Tax, payments, and portability
+
+Tax rules for nine jurisdictions across Bangladesh, Uruguay, and Argentina ship as
+**editable assumptions**, each carrying its own working (e.g., `0.75 × 12% = 9% of
+gross rent`). Two checkout routes run in sandbox mode: a built-in server-verified flow
+with Luhn validation and distinct decline paths, and an SSLCommerz gateway for real
+sandbox transactions. CSV export and import support duplicate detection and line-level
+rejection reporting.
+
+## Adaptive interface and Bangla
+
+Navigation is structural: a bottom bar on a phone, a rail from 600 dp, and a wider
+working surface with three-column metrics from 840 dp. The platform ships in English and
+Bangla across **770 translated strings**, switchable in-app or from Android's per-app
+language settings.

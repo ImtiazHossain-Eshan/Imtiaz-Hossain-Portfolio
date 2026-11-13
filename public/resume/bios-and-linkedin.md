@@ -2,7 +2,7 @@
 
 ## LinkedIn "About" section
 
-AI Engineer and researcher working across computer vision, NLP, deep learning, and production systems, currently studying Computer Science and Engineering at BRAC University (CGPA 3.7+).
+AI Engineer and researcher working across computer vision, NLP, deep learning, and production systems, currently studying Computer Science and Engineering at BRAC University.
 
 I train and evaluate models end to end and ship the systems around them. In medical imaging, my brain-tumor pipeline reaches 88.22% test Dice and 97.50% classification accuracy on the BRISC 2025 dataset. In NLP, I built a 27-experiment benchmark on 102k news headlines (0.9376 macro-F1 with BERT) and a 28-feature AI-text detector that hits 97.40% on HC3. My research, Obscrowd, advances biometric privacy under generative editing, reducing face-recognition linkability after edits while keeping images visually faithful.
 

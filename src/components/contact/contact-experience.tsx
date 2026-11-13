@@ -23,26 +23,9 @@ export function ContactExperience() {
   return (
     <section
       className="relative flex min-h-svh flex-col justify-center overflow-hidden py-32"
-      onPointerMove={
-        reduced
-          ? undefined
-          : (e) => {
-              setGlow({
-                x: (e.clientX / window.innerWidth) * 100,
-                y: (e.clientY / window.innerHeight) * 100,
-              });
-            }
-      }
+      onPointerMove={reduced ? undefined : (e) => setGlow({ x: (e.clientX / window.innerWidth) * 100, y: (e.clientY / window.innerHeight) * 100 })}
     >
-      {/* ambient glow follows the cursor */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 transition-[background] duration-300"
-        style={{
-          background: `radial-gradient(ellipse 50% 50% at ${glow.x}% ${glow.y}%, rgba(124,223,255,0.1), transparent 60%)`,
-        }}
-      />
-
+      <div aria-hidden className="original-contact-glow pointer-events-none absolute inset-0 transition-[background] duration-300" style={{ background: `radial-gradient(ellipse 50% 50% at ${glow.x}% ${glow.y}%, rgba(124,223,255,0.1), transparent 60%)` }} />
       <div className="wrap relative">
         <p className="label-mono mb-8">contact / say hello</p>
         <h1 className="max-w-5xl text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[1.03] tracking-[-0.03em] text-ink">

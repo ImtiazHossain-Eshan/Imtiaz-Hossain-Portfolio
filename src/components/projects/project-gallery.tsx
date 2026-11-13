@@ -16,7 +16,10 @@ export function ProjectGallery({ images, startAt = 1 }: { images: GalleryImage[]
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
-      {images.map((image, i) => (
+      {images.map((image, i) => {
+        // With an odd count, the first figure spans both columns.
+        const wide = images.length % 2 === 1 && i === 0;
+        return (
         <button
           key={image.src}
           type="button"
@@ -24,7 +27,7 @@ export function ProjectGallery({ images, startAt = 1 }: { images: GalleryImage[]
           data-cursor-label="enlarge"
           className={
             "group overflow-hidden rounded-xl border border-line bg-surface text-left transition-colors duration-300 hover:border-line-bright" +
-            (images.length % 2 === 1 && i === 0 ? " sm:col-span-2" : "")
+            (wide ? " sm:col-span-2" : "")
           }
         >
           <span className="block overflow-hidden">
@@ -33,7 +36,10 @@ export function ProjectGallery({ images, startAt = 1 }: { images: GalleryImage[]
               alt={image.caption}
               width={1400}
               height={900}
-              sizes="(max-width: 640px) 100vw, 50vw"
+              quality={90}
+              // Tell the browser the real rendered width, or it downloads a
+              // half-width file and stretches it (the blur on wide figures).
+              sizes={wide ? "(max-width: 1280px) 100vw, 1200px" : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 600px"}
               className="h-auto w-full transition-transform duration-700 ease-out group-hover:scale-[1.02]"
             />
           </span>
@@ -42,7 +48,8 @@ export function ProjectGallery({ images, startAt = 1 }: { images: GalleryImage[]
             {image.caption}
           </span>
         </button>
-      ))}
+        );
+      })}
 
       <Dialog.Root open={openIndex !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
         <Dialog.Portal>
@@ -61,6 +68,7 @@ export function ProjectGallery({ images, startAt = 1 }: { images: GalleryImage[]
                     width={2000}
                     height={1300}
                     sizes="95vw"
+                    quality={90}
                     className="max-h-[80vh] w-full object-contain"
                   />
                 </div>

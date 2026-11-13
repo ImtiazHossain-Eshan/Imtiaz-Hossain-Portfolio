@@ -4,7 +4,7 @@ import { resume } from "@/lib/resume";
 export const metadata: Metadata = {
   title: "Resume",
   description:
-    "Resume and CV of Imtiaz Hossain, an AI engineer and researcher focused on computer vision, NLP, deep learning, and full-stack systems.",
+    "Resume of Imtiaz Hossain: full-stack and Android software engineering, data analytics and Power BI, and applied machine learning.",
 };
 
 export default function ResumePage() {
@@ -16,7 +16,7 @@ export default function ResumePage() {
           <h1 className="text-4xl font-medium tracking-tight text-ink sm:text-5xl">Resume</h1>
         </div>
         <a
-          href="/resume/imtiaz-hossain-resume.pdf"
+          href="/resume/Imtiaz_Hossain_CV.pdf"
           download
           className="rounded-full bg-ink px-5 py-2.5 text-[13px] font-medium text-bg transition-colors duration-300 hover:bg-accent"
         >
@@ -73,11 +73,15 @@ export default function ResumePage() {
             </dl>
           </Section>
 
+          <Section title="Professional Experience">
+            <ExperienceList entries={resume.experience} />
+          </Section>
+
           <Section title="Research Experience">
             <ExperienceList entries={resume.researchExperience} />
           </Section>
 
-          <Section title="Selected Engineering Projects">
+          <Section title="Projects">
             <ExperienceList entries={resume.engineeringProjects} />
           </Section>
 
@@ -110,12 +114,22 @@ export default function ResumePage() {
                 <span className="text-[12px] text-[#555]">{resume.education.period}</span>
               </div>
               <p className="font-medium text-[#174a63]">{resume.education.school}</p>
-              <p className="text-[#555]">
-                {resume.education.location} - {resume.education.detail}
-              </p>
+              <p className="text-[#555]">{resume.education.location}</p>
               <p className="mt-1">
                 Relevant coursework: {resume.education.coursework.join(", ")}.
               </p>
+              {resume.education.earlier.map((entry) => (
+                <div key={entry.degree} className="mt-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <p className="font-semibold text-[#111]">{entry.degree}</p>
+                    <span className="text-[12px] text-[#555]">{entry.period}</span>
+                  </div>
+                  <p className="font-medium text-[#174a63]">{entry.school}</p>
+                  <p className="text-[#555]">
+                    {entry.score} - {entry.note}
+                  </p>
+                </div>
+              ))}
             </Section>
             <Section title="Teaching & Leadership" flush>
               <div className="space-y-3">

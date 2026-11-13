@@ -16,6 +16,7 @@ const telemetry = [
 
 /** Server-rendered hero: headline paints and animates with zero JS. */
 export function Hero() {
+  const nameParts = site.name.split(" ");
   const words = [
     { text: "I", serif: false },
     { text: "build", serif: false },
@@ -33,16 +34,28 @@ export function Hero() {
 
       <div className="wrap relative z-10 flex flex-1 flex-col justify-center pb-16 pt-32">
         <p
-          className="hero-fade mb-8 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.16em] text-dim"
+          className="hero-fade mb-6 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.16em] text-dim"
           style={{ animationDelay: "0.15s" }}
         >
           <span className="h-1.5 w-1.5 rounded-full bg-good" aria-hidden />
-          {site.name} / {site.location} / open to research &amp; roles
+          {site.location} / open to research &amp; roles
         </p>
 
-        <h1
+        {/* The name is the page's main heading: the first thing a visitor
+            (or a search engine) should read. */}
+        <h1 className="max-w-5xl text-[clamp(3.1rem,9vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.04em] text-ink">
+          {nameParts.map((part, i) => (
+            <span key={part} className="hero-mask mr-[0.22em] last:mr-0">
+              <span className="hero-word" style={{ animationDelay: `${0.2 + i * 0.1}s` }}>
+                {part}
+              </span>
+            </span>
+          ))}
+        </h1>
+
+        <p
           aria-label={site.tagline}
-          className="max-w-5xl text-[clamp(2.9rem,8.5vw,7rem)] font-medium leading-[1.02] tracking-[-0.03em] text-ink"
+          className="mt-5 max-w-4xl text-[clamp(1.7rem,4.2vw,3.4rem)] font-medium leading-[1.08] tracking-[-0.025em] text-dim"
         >
           {words.map((word, i) => (
             <span key={word.text} aria-hidden className="hero-mask mr-[0.24em] last:mr-0">
@@ -50,13 +63,13 @@ export function Hero() {
                 className={
                   "hero-word" + (word.serif ? " font-display italic font-normal text-accent" : "")
                 }
-                style={{ animationDelay: `${0.25 + i * 0.09}s` }}
+                style={{ animationDelay: `${0.45 + i * 0.08}s` }}
               >
                 {word.text}
               </span>
             </span>
           ))}
-        </h1>
+        </p>
 
         <div
           className="hero-fade mt-9 flex max-w-2xl flex-wrap gap-2"

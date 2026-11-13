@@ -20,7 +20,7 @@ const certifications = [
 const facts = [
   { label: "based in", value: site.location },
   { label: "university", value: `${site.university}, CSE` },
-  { label: "cgpa", value: site.cgpa },
+  { label: "status", value: "Final semester, graduating Jan 2027" },
   { label: "focus", value: "AI · CV · NLP · Research" },
 ];
 

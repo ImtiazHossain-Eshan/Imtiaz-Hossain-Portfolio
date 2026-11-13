@@ -5,8 +5,8 @@ kind: about
 href: /about
 ---
 
-Imtiaz Hossain is an AI Engineer and researcher from Dhaka, Bangladesh, studying
-Computer Science and Engineering at BRAC University with a CGPA of 3.7+. He works
+Imtiaz Hossain is an AI Engineer and researcher from Dhaka, Bangladesh, and a
+final-semester B.Sc. in Computer Science student at BRAC University. He works
 across computer vision, natural language processing, image processing, deep
 learning, machine learning, full stack development, systems programming, cloud,
 and game development.

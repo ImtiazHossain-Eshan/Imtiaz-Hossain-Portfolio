@@ -1,0 +1,106 @@
+---
+title: Nishan
+slug: nishan
+category: fullstack
+tagline: A geo-tagged landmarks Android client that renders proximity scores as stellar magnitudes, visits as state machines, and stays fully usable offline.
+summary: A single-module Kotlin and Jetpack Compose app for the CSE 489 Smart Geo-Tagged Landmarks API, with Room caching, WorkManager visit settlement, osmdroid maps, and a logarithmic stellar-magnitude visualisation that makes five orders of magnitude of distance data legible.
+period: 2026
+featured: 4.5
+status: shipped
+cover: /assets/projects/nishan/hero-banner.webp
+gallery:
+  - src: /assets/projects/nishan/map-observer.png
+    caption: "Map observer: live GPS position with accuracy circle and stellar-magnitude landmark markers"
+  - src: /assets/projects/nishan/landmark-sheet.png
+    caption: "Selected landmark sheet with real-time dashed sight line and computed distance reading"
+  - src: /assets/projects/nishan/landmarks-index.png
+    caption: "Sortable and filterable register displaying both raw server scores and derived magnitude"
+  - src: /assets/projects/nishan/activity-log.png
+    caption: "Visit history: asynchronous settlement state machine tracking server job identifiers"
+  - src: /assets/projects/nishan/add-view.png
+    caption: "Landmark creation and management with optional image capture, withdrawal, and restoration"
+  - src: /assets/projects/nishan/light-mode.png
+    caption: "High-contrast paper palette: light theme inverted display for daytime outdoor field use"
+stack:
+  - Kotlin
+  - Jetpack Compose
+  - Room
+  - WorkManager
+  - osmdroid
+  - Material 3
+  - Retrofit
+links:
+  github: https://github.com/ImtiazHossain-Eshan/nishan-android
+metrics:
+  - label: layout
+    value: 0 XML
+    detail: pure Compose, no XML layouts
+  - label: scoring
+    value: magnitude
+    detail: log-scale stellar transform
+  - label: offline
+    value: full
+    detail: Room cache, WorkManager sync
+  - label: map
+    value: OSM
+    detail: no API key, no billing
+architecture:
+  - { id: api, label: "Landmarks API", sub: "CSE 489 server", col: 0, row: 0, to: [repo] }
+  - { id: gps, label: "GPS Provider", sub: "fused location", col: 0, row: 2, to: [repo] }
+  - { id: repo, label: "Repository", sub: "single truth", col: 1, row: 1, to: [room, viewmodel] }
+  - { id: room, label: "Room DB", sub: "offline cache", col: 2, row: 2, to: [viewmodel] }
+  - { id: viewmodel, label: "ViewModel", sub: "magnitude transform", col: 2, row: 0, to: [ui] }
+  - { id: ui, label: "Compose UI", sub: "map + index", col: 3, row: 1, to: [] }
+  - { id: worker, label: "WorkManager", sub: "visit settlement", col: 1, row: 2, to: [api] }
+---
+
+## The data shape problem
+
+The CSE 489 Landmarks API returns a score derived from visit count and average distance:
+`score = 8 × visit_count − avg_distance / 8`. Every score on this dataset is negative,
+ranging from about −1,580,000 to −24, and average distances span five orders of
+magnitude. Plotting the raw figure collapses nine landmarks out of ten onto the same
+mark.
+
+## Stellar magnitude as the right transform
+
+Nishan renders score as **stellar magnitude**: a logarithmic, inverted scale borrowed
+from astronomy, because it is the correct transform for data shaped like this.
+
+```
+magnitude = 2.5 × log₁₀(avg_distance / 100 m)
+```
+
+A visit landing within 100 m is magnitude 0; a 10 km miss is magnitude 5; the polluted
+rows already in the dataset sit near 12.8. That transform gives the interface its
+character: the register is drawn as a **star chart**, and a landmark's brightness is how
+accurately it has been visited. Both numbers are always printed: magnitude because it is
+what can be plotted, and the raw score because it is what the server actually returned.
+
+## Visits as a state machine
+
+A visit does not resolve immediately. `visit_landmark` returns a `job_id`; the distance
+only exists once that job finishes. Nishan models this as a state machine rather than a
+simple request-response, with **WorkManager** settling pending visits in the background.
+A hollow pin head on the map means nobody has visited a landmark yet; a ringed head
+means a visit the server has not resolved.
+
+## Map and index
+
+**Map.** OpenStreetMap through osmdroid, with no API key and no billing account. Landmarks
+are drawn as location pins in a Compose canvas over the map, projected through the live
+map projection. Head colour runs a **spectral ramp** from blue-white (close) through
+amber to red (distant), and head diameter carries the same value, so the reading survives
+colour-blindness and greyscale.
+
+**Index.** A ruled register rather than a card per row: title, image, score, magnitude,
+mean miss, and visit count. Sort by brightest, faintest, or name; filter by minimum
+score, with the slider range computed from the actual data.
+
+## Fully offline, zero XML
+
+The entire app is written in **Kotlin and Jetpack Compose** with no XML layouts. Room
+caches everything the API returns, so the app stays fully usable with no connection at
+all. Create a landmark with an optional image, withdraw and reinstate what your device
+charted, and review every visit this device recorded with the measured distance and
+server job ID.

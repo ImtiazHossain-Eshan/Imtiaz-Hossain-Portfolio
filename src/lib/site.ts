@@ -19,7 +19,6 @@ export const site = {
     leetcode: "https://leetcode.com/u/Imtiaz_Hossain_Eshan/",
   },
   university: "BRAC University",
-  cgpa: "3.7+",
 } as const;
 
 export const navLinks = [

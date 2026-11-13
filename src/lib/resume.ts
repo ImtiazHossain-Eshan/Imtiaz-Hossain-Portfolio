@@ -1,8 +1,9 @@
 import { site } from "@/lib/site";
 
+/** Mirrors cv/cv.html (rebuilt 2026-11-13). Update the CV first, then copy wording here. */
 export const resume = {
   name: site.name,
-  title: "AI/ML Research | Computer Vision & NLP | Full-Stack, Mobile & Systems Engineering",
+  title: "Full-Stack & Android Software Engineering | Data Analytics & Power BI | Applied Machine Learning",
   location: site.location,
   phone: "+880 1401-692968",
   email: site.email,
@@ -15,58 +16,80 @@ export const resume = {
   },
 
   summary:
-    "Computer Science and Engineering student at BRAC University working across machine learning, computer vision, natural language processing, mobile development, and full-stack systems. Builds projects from experimental design and model evaluation through APIs, cloud deployment, and interactive interfaces. Research focuses on biometric privacy under generative image editing, with work in medical imaging and text analysis. Interested in research and engineering roles that value reproducible evidence, systems thinking, and dependable software.",
+    "Final-semester Computer Science student at BRAC University and digital transformation intern at BRAC Bank, developing Power BI dashboards for branch KPI and loan reporting. Builds full-stack web platforms, including live, publicly deployed products, and native Android applications using TypeScript, Next.js, Kotlin, and SQL, and completed an undergraduate thesis in computer vision. Combines software engineering and data analysis with clear technical communication, developed as a university Student Tutor for Java.",
 
   skills: [
     {
-      group: "Programming Languages",
+      group: "Programming",
       lines: [
-        "Python, TypeScript, Kotlin, C, JavaScript, SQL, PHP",
-        "Object-oriented programming, data structures, algorithms, and problem solving",
+        "Python, Java, JavaScript, TypeScript, Kotlin, C, SQL, PHP, HTML5, CSS3; OOP, data structures and algorithms, problem-solving",
       ],
     },
     {
-      group: "Machine Learning & Data Science",
+      group: "Web & Backend",
       lines: [
-        "PyTorch, scikit-learn, Hugging Face Transformers, OpenCV, NumPy, pandas, gensim",
-        "Regression, classification, hyperparameter search, cross-validation, and feature engineering",
-        "Experimental design, class-imbalance handling, error analysis, evaluation, and reproducibility",
+        "React, Next.js, Node.js, Express, Hono, REST APIs, Tailwind CSS, Socket.IO, JWT, Clerk, role-based access control (RBAC), Zod validation, responsive UI, reusable components, API documentation",
       ],
     },
     {
-      group: "Computer Vision & NLP",
+      group: "Data & Analytics",
       lines: [
-        "U-Net, Attention U-Net, DenseNet, EfficientNet, MobileNet, and diffusion models",
-        "BERT, RNN/GRU/LSTM, TF-IDF, embeddings, stylometry, mRMR, and RFE",
+        "Power BI, Power Query, Microsoft Excel, SQL, MySQL, MongoDB, Cloudflare D1, Firebase Firestore, Drizzle ORM, pandas, NumPy, data analysis, KPI dashboards, reporting, relational data modeling",
       ],
     },
     {
-      group: "Web, Cloud & Data",
+      group: "Machine Learning & AI",
       lines: [
-        "Next.js, React, Node.js, Express, Hono, Socket.IO, REST APIs, and Zod",
-        "Cloudflare Workers, D1, R2, Vercel, and Docker",
-        "MongoDB, MySQL, Drizzle ORM, Clerk, JWT, and role-based access control",
+        "PyTorch, scikit-learn, Hugging Face Transformers, OpenCV, NLP, computer vision, CNNs, U-Net, BERT, LLM integration",
       ],
     },
     {
-      group: "Mobile, Systems & Tools",
+      group: "Mobile",
       lines: [
-        "Android SDK, Jetpack Navigation, Activities, Fragments, ViewBinding, XML, and ConstraintLayout",
-        "Intents, BroadcastReceiver, MediaPlayer, VideoView, Glide, and custom touch gestures",
-        "POSIX, Linux, Git, Gradle, JUnit, Vitest, LaTeX, and technical writing",
+        "Android, Kotlin, Jetpack Compose, Room, Retrofit, WorkManager, Firebase, Figma wireframing and UI/UX design",
+      ],
+    },
+    {
+      group: "Cloud, Tools & Testing",
+      lines: [
+        "Git, GitHub, Linux/POSIX, Docker, Cloudflare Workers, Cloudflare R2, Vercel, JUnit, Vitest, Three.js",
+      ],
+    },
+    {
+      group: "Languages",
+      lines: ["Bangla (native), English (IELTS overall band 7)"],
+    },
+  ],
+
+  experience: [
+    {
+      role: "Branch Digital Transformation COMPASS Intern",
+      org: "BRAC Bank PLC | Distribution Network Division, Head Office | Dhaka, Bangladesh",
+      period: "Oct 2026 - Present",
+      bullets: [
+        "Develop Power BI dashboards for branch KPI monitoring and loan-related reporting, supporting visibility into operational performance.",
+        "Analyze operational and business data in Excel and Power Query to support the division's reporting and dashboard requirements.",
+        "Contribute to banking automation and digital-branch transformation initiatives.",
+      ],
+    },
+    {
+      role: "Student Tutor (ST/TA), CSE110: Programming Language I (Java)",
+      org: "BRAC University | Department of Computer Science and Engineering | Dhaka, Bangladesh",
+      period: "Nov 2026 - Present",
+      bullets: [
+        "Guide CSE110 students through Java fundamentals, code tracing, debugging, and problem-solving in clear, accessible terms.",
+        "Built and deployed a consultation platform in React, TypeScript, Vite, Tailwind CSS, and Framer Motion with an interactive timetable, instant session lookup, and a structured consultation-request composer.",
       ],
     },
   ],
 
   researchExperience: [
     {
-      role: "Independent Researcher - Biometric Privacy",
-      org: "Obscrowd, BRAC University",
+      role: "Undergraduate Thesis Researcher - Multi-Portrait Biometric Unlinkability",
+      org: "BRAC University, four-member thesis team",
       period: "2026 - Present",
       bullets: [
-        "Designed Obscrowd, a multi-portrait biometric privacy framework that protects every detected face with one soft-mask-guided perturbation while preserving the visual fidelity of the original image.",
-        "Built a teacher-student-refinement pipeline combining a diffusion-guided teacher, lightweight student generator, face-recognition ensembles, and differentiable editing attacks for identity disruption.",
-        "Evaluated protection per face across generative edits and processing conditions; a sample smile edit reduced recognition similarity from 0.957 to 0.138, while compression remains an open limitation.",
+        "Completed a four-member thesis developing Obscrowd, a multi-portrait biometric unlinkability framework for protecting faces after generative editing; contributed to the model pipeline and evaluation, and the manuscript is being prepared for publication.",
       ],
     },
     {
@@ -93,42 +116,71 @@ export const resume = {
 
   engineeringProjects: [
     {
-      role: "Full-Stack and AI Engineering",
-      org: "BRACU Vault and Polaris",
+      role: "BRACU Vault",
+      org: "Next.js, TypeScript, Cloudflare Workers, Hono, D1, R2, Drizzle ORM, Clerk",
       period: "2026",
       bullets: [
-        "Built BRACU Vault, a verified academic resource platform on Next.js, Cloudflare Workers, Hono, D1, R2, Drizzle, and Clerk, with university-email-gated uploads, moderation, and audit trails.",
-        "Designed a six-role, data-driven access model and controller-service-repository-policy API; atomic D1 activation and audit logging keep verification idempotent and traceable across privileged workflows.",
-        "Built Polaris using Gemini structured JSON, retrieval over a 60-document knowledge base, and a transparent logistic-regression model for explainable academic planning and what-if simulation.",
-        "Implemented offline heuristic fallbacks, Zod validation, subscription gating, MongoDB indexes, signed payment webhooks, and role-aware student, parent, partner, and admin views across paid tiers.",
+        "Built and deployed an academic-resource platform with a Next.js/TypeScript interface, role-based access, gated uploads, moderation, secure file workflows, and auditable verification on Cloudflare infrastructure.",
+        "Integrated REST APIs and database-backed permissions using Cloudflare Workers, Hono, D1, R2, Drizzle, and Clerk.",
       ],
     },
     {
-      role: "Robotics and Real-Time Systems",
-      org: "Vantage Arm Digital Twin and WattsUp Office Monitor",
+      role: "Polaris",
+      org: "Next.js, TypeScript, MongoDB, Gemma 4, Zod",
       period: "2026",
       bullets: [
-        "Engineered a Three.js robotic-arm digital twin with damped-least-squares inverse kinematics, forward-kinematics verification, collision checks, joint limits, motion replay, and autonomous PIN entry.",
-        "Centralized manual, voice, Gemini-planned, replay, and PIN commands behind one deterministic safety gateway, with a Zustand state model and an ESP32 six-servo hardware concept for all control modes.",
-        "Built WattsUp as a simulated IoT energy monitor whose Express backend owns 15-device state, virtual time, usage, and alert rules shared by a live Three.js dashboard and Discord bot without client drift.",
-        "Synchronized controls over Socket.IO and exposed status, usage, simulation, turn-off, and alert commands through Discord.js, with stable IDs for deduplicated notifications across both interfaces.",
+        "Built a Bengali-first academic strategy platform that turns a student's goals, evidence, constraints, and deadlines into an adaptive roadmap with weekly actions, using a Gemma 4 strategist for roadmap generation and decision support.",
+        "Added IELTS practice, video discovery, knowledge notes, evidence graphs, and a multimodal Essay Studio, backed by official-source retrieval, schema validation, deterministic safeguards, MongoDB persistence, signed payment webhooks, and clearly labelled fallbacks.",
       ],
     },
     {
-      role: "Android Application Development",
-      org: "CSE489 Mobile Application Development",
+      role: "Vantage Arm Digital Twin",
+      org: "React, TypeScript, Three.js, Zustand, Vitest",
       period: "2026",
       bullets: [
-        "Built two Kotlin Android applications covering Activities, Fragments, lifecycle state restoration, ViewBinding, Jetpack Navigation, responsive XML resources, and JUnit-tested business logic.",
-        "Implemented custom broadcasts, battery status handling, Glide image loading, matrix-based pinch zoom and panning, plus audio and video playback with lifecycle-aware resource cleanup for lifecycle safety.",
+        "Engineered a Three.js robotic-arm digital twin with inverse kinematics, safety constraints, motion replay, forward-kinematics checks, collision handling, and AI-planned command validation.",
       ],
     },
     {
-      role: "Systems Programming",
-      org: "Custom UNIX Shell and VSFSck",
+      role: "WattsUp Office Monitor",
+      org: "Node.js, Express, Socket.IO, React, Three.js, Discord.js",
+      period: "2026",
+      bullets: [
+        "Built a simulated IoT energy monitor whose Express backend manages 15-device state, virtual time, usage, and alerts, with Socket.IO synchronization and Discord.js command integration.",
+      ],
+    },
+    {
+      role: "Custom UNIX Shell and VSFSck",
+      org: "C, POSIX, Linux",
       period: "2025",
       bullets: [
         "Built C systems tools: a POSIX shell with fork/exec, pipes, redirection, chaining, history, and scoped SIGINT handling, plus an fsck-style checker for superblocks, bitmaps, inodes, and block references.",
+      ],
+    },
+    {
+      role: "Portico - Real-Estate Portfolio Intelligence (Android)",
+      org: "Kotlin, Jetpack Compose, Firebase/Firestore, Clerk",
+      period: "2026",
+      bullets: [
+        "Designed the app screens and user flows in Figma for CSE489 Mobile Application Development, then built the native Android application using Kotlin and Jetpack Compose with responsive phone and tablet layouts for onboarding, authentication, portfolio dashboards, property details, reports, documents, and account workflows.",
+        "Integrated Clerk authentication, owner-scoped Firestore data, a serverless API bridge, bilingual English/Bangla interfaces, financial visualizations (ROI, cap rate, yield, cashflow), and an on-device portfolio assistant; the repository documents 116 passing tests.",
+      ],
+    },
+    {
+      role: "Nishan - Smart Geo-Tagged Landmarks (Android)",
+      org: "Kotlin, Jetpack Compose, Room, Retrofit, WorkManager",
+      period: "2026",
+      bullets: [
+        "Built an offline-first Android client for CSE489 with OpenStreetMap, GPS-based visit recording, a sortable and filterable landmark register, map interactions, activity history, and landmark create, withdraw, and restore workflows.",
+        "Integrated REST API calls with Retrofit and OkHttp, local Room persistence, and WorkManager background queue processing and visit-status synchronization.",
+      ],
+    },
+    {
+      role: "Additional Android Coursework",
+      org: "Android SDK, Jetpack Navigation, ViewBinding, JUnit",
+      period: "2026",
+      bullets: [
+        "Built Android applications covering Activities, Fragments, lifecycle state restoration, ViewBinding, Jetpack Navigation, responsive XML resources, and JUnit-tested business logic; implemented custom broadcasts, battery status handling, Glide image loading, matrix-based pinch zoom and panning, audio/video playback, and lifecycle-aware resource cleanup.",
       ],
     },
   ],
@@ -137,7 +189,7 @@ export const resume = {
     {
       name: "E-GamerHub",
       description:
-        "Co-developed a MERN social platform with Socket.IO messaging, RBAC moderation, per-game statistics, and Llama 3 intent extraction for natural-language player search.",
+        "Co-developed a MERN-stack social gaming platform with Socket.IO messaging, RBAC moderation, per-game statistics, and Llama 3 intent extraction for natural-language player search.",
     },
     {
       name: "CampusSync",
@@ -174,26 +226,43 @@ export const resume = {
   research: [
     {
       title: "Multi-Portrait Biometric Unlinkability under Generative Editing",
-      venue: "Working paper",
+      venue: "Completed undergraduate thesis; manuscript in preparation",
       year: "2026",
-      note: "Manuscript in preparation with a four-member research team; full methods and quantitative results remain restricted.",
+      note: "Obscrowd is the framework developed in this four-member BRAC University thesis.",
     },
   ],
 
   education: {
     school: site.university,
-    degree: "B.Sc. in Computer Science and Engineering",
+    degree: "B.Sc. in Computer Science",
     location: "Dhaka, Bangladesh",
-    period: "2023 - Present",
-    detail: `CGPA ${site.cgpa}`,
+    period: "2023 - Jan 2027 (expected)",
     coursework: [
-      "Machine Learning",
+      "Data Structures and Algorithms",
+      "Database Systems",
+      "Operating Systems",
       "Artificial Intelligence",
+      "NLP",
+      "Image Processing",
+      "Data Science",
       "Mobile Application Development",
       "Computer Graphics",
-      "Operating Systems",
-      "Database Systems",
-      "Data Structures and Algorithms",
+    ],
+    earlier: [
+      {
+        degree: "Higher Secondary Certificate (HSC), Science",
+        period: "2019 - 2021",
+        school: "Dhaka College, Dhaka Board",
+        score: "GPA 5.00/5.00",
+        note: "General Scholarship: Dhaka Board rank 462, NCTB/Ministry of Education (2019 - 2022)",
+      },
+      {
+        degree: "Secondary School Certificate (SSC), Science",
+        period: "2019",
+        school: "Ideal School & College, Dhaka Board",
+        score: "GPA 5.00/5.00",
+        note: "Talent Pool Scholarship: Dhaka Board 21st place, NCTB/Ministry of Education (2019)",
+      },
     ],
   },
 
@@ -203,23 +272,24 @@ export const resume = {
       org: "Dhaka, Bangladesh",
       period: "2024 - Present",
       description:
-        "Tutors programming in C, Java, and Python alongside data structures, algorithms, and mathematics; supports students with problem solving and university coursework.",
+        "Tutor programming in C, Java, and Python alongside data structures, algorithms, and mathematics; support students with problem-solving and university coursework.",
     },
     {
       role: "Assistant Director",
-      org: "BRACU E-Sports Club",
-      period: "Leadership experience",
+      org: "BRACU E-Sports Club, BRAC University",
+      period: "2025",
       description: "Supported club operations and esports event management at BRAC University.",
     },
   ],
 
   honors: [
-    "Five-time scholarship recipient based on merit and prior academic results",
-    "Top 10 finalist, TECHATHON NATIONALS 2026, presented by IUT Robotics Society",
+    "Six-time scholarship recipient (merit and prior academic results)",
+    "Top 10 finalist, TECHATHON NATIONALS 2026 (presented by IUT Robotics Society)",
     "Finalist, The Infinity AI BuildFest 2026 hackathon",
+    "Special Recognition for Polaris, Build with Gemma 4 Hackathon (Gemma-powered academic strategy and student planning platform)",
     "Final-round participant, Bit Battles Programming Contest",
     "Solved 233+ algorithmic problems on LeetCode",
-    "IELTS overall band 7",
+    "IELTS overall band 7 (English proficiency), 29 October 2022",
   ],
 
   certifications: [
@@ -229,9 +299,9 @@ export const resume = {
   ],
 
   provenance: [
-    "Obscrowd is a working paper in preparation and is not presented as published or peer reviewed.",
+    "The thesis manuscript is in preparation and is not presented as published or peer reviewed.",
     "Research metrics are project evaluation results, not employer or production claims.",
     "Android skills are supported by the two inspected CSE489 assignment codebases.",
-    "Leadership is listed without an invented date because the available source does not provide one.",
+    "CGPA is deliberately not shown on the website; it appears only in the CV PDF.",
   ],
 } as const;
